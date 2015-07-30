@@ -1,0 +1,13 @@
+
+Thie is a document about the 'bekeband' corporation Process Indicator Display. 
+The software version is 2.5
+
+Process Indicator
+
+Version display
+
+After switch ON the main power 
+  "Process Display"
+  "VERSION: 2.5"
+
+Check EEPROM CRC 

@@ -96,8 +96,8 @@ float GetADValue(int num)
 
 void DelayDisplayValue(int delay_value)
 {
-  TIMER_COUNTER_VALUE = delay_value;
-  while (TIMER_COUNTER_VALUE < VERSION_DELAY);
+  TIMER_COUNTER_VALUE = 0;
+  while (TIMER_COUNTER_VALUE < delay_value);
 }
 
 void ReadFlashMemory()
@@ -231,7 +231,7 @@ int WelcomeScreen()
   sprintf(buf, "VERSION: %i.%i", VER_H, VER_L);
   LCDSendStr(buf);
 
-  DelayDisplayValue(400);
+  DelayDisplayValue(40);
 
   LCDSendCmd(CLR_DISP);
   LCDSendCmd(DD_RAM_ADDR);
@@ -246,16 +246,15 @@ int WelcomeScreen()
     {
       sprintf(buf, "CRC = %04X BAD!", CALCCHECKSUM);
       LCDSendStr(buf);
+      while (1);
     }
-
+  DelayDisplayValue(40);
   LCDSendCmd(CLR_DISP);
   LCDSendCmd(DD_RAM_ADDR);
   LCDSendStr("Datas from Flash");
   LCDSendCmd(DD_RAM_ADDR2);
   ReadFlashMemory();
-  
-  sprintf(buf, "MIN=%7.3f", CHAN_FEATS[0].eeprom_datas.max_val);
-  LCDSendStr(buf);
+  LCDSendStr("OK!");
 
   return 0;
 }
@@ -276,8 +275,6 @@ int main(int argc, char** argv) {
   InitButtons();
 
   WelcomeScreen();
-
-  while (1);
 
   DRAW_STATE = DRAW_INIT;
 
