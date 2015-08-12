@@ -20,6 +20,7 @@ extern "C" {
   };
 
 extern int NEW_AD_DATA;
+extern int NEW_SUMMA_COUNT;
 extern unsigned long AD_DATA[MAX_AD_COUNT];
 extern int CURRENT_MESSAGE;
 extern int TIMER_COUNTER_VALUE;

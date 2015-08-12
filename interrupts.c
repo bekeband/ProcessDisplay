@@ -11,6 +11,7 @@ int AD_COUNTER = 0;
 int AD_AVERAGE_FACTOR = DEFAULT_AD_AVERAGE_FACTOR;
 int AD_AVERAGE_COUNTER;
 int NEW_AD_DATA = 0;
+int NEW_SUMMA_COUNT = 0;
 
 int AD_RESTART_DIS = 0;
 
@@ -37,6 +38,7 @@ void ResetADBuffers()
 int CURRENT_MESSAGE = 0;
 int BUTTON_COUNTER[BUT_NUMBER] = {0,0,0,0};
 int INHIBIT[BUT_NUMBER] = {0,0,0,0};
+int SEC_TIMER = 0;
 
 void interrupt isr(void)
 { int i;
@@ -53,7 +55,15 @@ if (INTCONbits.T0IF)  // T0 timer interrupt
 
 if (PIR5bits.TMR5IF)
 {
+  TMR5L   = TMR5LVAL;
+  TMR5H   = TMR5HVAL;
   PIR5bits.TMR5IF = 0;
+  if ((SEC_TIMER++) == 40)
+  {
+    NEW_SUMMA_COUNT = 1;
+    LED1 = !LED1;
+    SEC_TIMER = 0;
+  }
   TIMER_COUNTER_VALUE++;
   /* Button inputs and debounce programs. */
 /* ------------------------------- BUTTON UP --------------------------------*/

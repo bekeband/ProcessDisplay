@@ -1,2 +1,20 @@
 
 This is Process Display program for 'bekebandTM' Process Display module.
+
+Process Display
+
+Features:
+
+  Analog input: One analog input channel is voltage, or current input. (jumper settings)
+  Voltage input:  0-5 V, 1-5 V (software programmed.)
+  Current input:  0-20 mA, 4-20 mA (Software programmed.)
+
+  Max. input value 22,5 mA.
+  Input resistence: 220 ohm.
+
+  Absulute maxmimum rating:
+  Max. input voltage is 5,5 V equivalent 25 mA in 220 ohm.
+
+  A/D result 10 bits. (5 bits oversamles, therefore software result is 15 bits.)
+
+  Analog

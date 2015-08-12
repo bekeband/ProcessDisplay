@@ -22,7 +22,9 @@
 #endif
 #include "crc.h"
 
+/* All channes datas to initialize features. */
 u_chan_datas CHAN_FEATS[MAX_AD_COUNT];
+s_summa_datas CHAN_SUMMAS[MAX_AD_COUNT];
 
 static DRAW_STATES DRAW_STATE = DRAW_INIT;
 
@@ -30,6 +32,9 @@ uint16_t CHECKSUM;
 
 unsigned int old_ad_value;
 float new_data;
+
+const char* dim_table[] = {"m3/sec", "m3/min", "m3/hr", "kg/sec", "kg/min", "kg/hr", "t/sec", "t/min", "t/hr", "mm3", "cm3", "m3",
+  "gramm", "dkg", "kg", "q", "t", "sec", "mins", "hours", "days", "week", "mount", "years", "mm", "cm", "m", "km"};
 
 void ReadDataEEP(char* d_ptr, int baddr, int size)
 { int i;
@@ -51,8 +56,8 @@ void InitTimers()
 {
 
   T5GCON  = 0b00000000;
-  TMR5L   = 0;
-  TMR5H   = 0;
+  TMR5L   = TMR5LVAL;
+  TMR5H   = TMR5HVAL;
 
   T5CONbits.T5RD16 = 1;     /* Enables register read/write of Timer1/3/5 in one 16-bit operation */
   T5CONbits.T5SYNC = 1;
@@ -60,6 +65,7 @@ void InitTimers()
   T5CONbits.T5CKPS = 0b11;  /*  11 = 1:8 Prescale value 10 = 1:4 Prescale value
                                 01 = 1:2 Prescale value 00 = 1:1 Prescale value */
   T5CONbits.TMR5ON = 1;
+
 }
 
 void InitButtons()
@@ -79,12 +85,23 @@ void InitAD()
 }
 
 void InitADValues()
-{
-  CHAN_FEATS[0].eeprom_datas.min_eng = 6547;   // MIN. input integer value
-  CHAN_FEATS[0].eeprom_datas.max_eng = 32736;  // MAX. input integer value
-  CHAN_FEATS[0].eeprom_datas.min_val = 0;
-  CHAN_FEATS[0].eeprom_datas.max_val = 100;
+{ int i;
+  for (i = 0; i < MAX_AD_COUNT; i++)
+  {
+    CHAN_FEATS[i].eeprom_datas.input_dim = 0;     // input dim %
+    CHAN_FEATS[i].eeprom_datas.input_type = 0;    // input type 4-20 mA
+    CHAN_FEATS[i].eeprom_datas.min_eng = 0;       //6547;    // MIN. input integer value
+    CHAN_FEATS[i].eeprom_datas.max_eng = 32736;   // MAX. input integer value
+    CHAN_FEATS[i].eeprom_datas.min_val = 0;       //
+    CHAN_FEATS[i].eeprom_datas.max_val = 11.11;     //
+  }
+}
 
+int WriteStandardDatasToEEPROM()
+{
+  InitADValues();
+  WriteDataEEP((unsigned char*) &CHAN_FEATS, 0, sizeof(CHAN_FEATS));
+  return 0;
 }
 
 float GetADValue(int num)
@@ -100,32 +117,55 @@ void DelayDisplayValue(int delay_value)
   while (TIMER_COUNTER_VALUE < delay_value);
 }
 
-void ReadFlashMemory()
-{ int i;
-  for (i = 0; i < MAX_AD_COUNT; i++)
-  {
-    ReadDataEEP((char*)&CHAN_FEATS, i * sizeof(u_chan_datas), sizeof(u_chan_datas));
-  }
+int ReadFlashMemory()
+{
+  WriteDataEEP((unsigned char*) &CHAN_FEATS, 0, sizeof(CHAN_FEATS));
+  return 0;
 }
 
 void MainDisplay()
-{
+{ char buf[20];
 
   switch (DRAW_STATE)
   {
     case DRAW_INIT:
-
+      DelayDisplayValue(40);
+      LCDSendCmd(CLR_DISP);
 
       DRAW_STATE = DRAW_RUN;
+      
       break;
     case DRAW_RUN:
 
+     if (NEW_SUMMA_COUNT)
+          {
+            new_data = GetADValue(0);
+            CHAN_SUMMAS[0].sum_1 += new_data;
+            LCDSendCmd(DD_RAM_ADDR2);
+            sprintf(buf, "%12.1f  %s", CHAN_SUMMAS[0].sum_1, dim_table[CHAN_SUMMAS[0].sum_dim]);
+            LCDSendStr(buf);
+            NEW_SUMMA_COUNT = 0;
+          }
+
+      if (NEW_AD_DATA)
+        {
+          NEW_AD_DATA = 0;
+ 
+        if (AD_DATA[0] != old_ad_value)
+        {
+          old_ad_value = AD_DATA[0];
+          new_data = GetADValue(0);
+          LCDSendCmd(DD_RAM_ADDR);
+          sprintf(buf, "%9.2f %s", new_data, dim_table[CHAN_FEATS[0].eeprom_datas.input_dim]);
+          LCDSendStr(buf);
+        }
+      };
       break;
     case DRAW_EXIT:
 
       break;
   }
-}
+};
 
 void IOTestDisplay()
 {
@@ -169,6 +209,21 @@ int BUTTestDisplay()
       CURRENT_MESSAGE = 0;
       LCDSendStr(buf);
       }
+  }
+}
+
+void ClearSummas(int channel)
+{
+  CHAN_SUMMAS[channel].sum_1 = 0;
+  CHAN_SUMMAS[channel].sum_2 = 0;
+  CHAN_SUMMAS[channel].sum_dim = 11;
+}
+
+void ClearAllSummas()
+{ int i;
+  for (i = 0; i < MAX_AD_COUNT; i++)
+  {
+    ClearSummas(i);
   }
 }
 
@@ -218,7 +273,9 @@ int ADTestDisplay(int channel)
 
 int WelcomeScreen()
 { char buf[20];
-  uint16_t EEPROM_SIZE = _EEPROMSIZE - 2; // Last word the CRC checksum.
+//  uint16_t EEPROM_SIZE =
+  uint16_t CHECKED_EEPROM_SIZE = sizeof(CHAN_FEATS);
+  uint16_t CRC_ADDRESS = _EEPROMSIZE - 2; // Last word the CRC checksum.
   uint16_t CALCCHECKSUM;
   uint16_t STOREDCHECKSUM;
 
@@ -231,30 +288,46 @@ int WelcomeScreen()
   sprintf(buf, "VERSION: %i.%i", VER_H, VER_L);
   LCDSendStr(buf);
 
-  DelayDisplayValue(40);
+  do
+  {
 
-  LCDSendCmd(CLR_DISP);
-  LCDSendCmd(DD_RAM_ADDR);
-  LCDSendStr("Check EEPROM CRC");
-  CALCCHECKSUM = gen_crc16(Read_b_eep, EEPROM_SIZE, 0);
-  LCDSendCmd(DD_RAM_ADDR2);
-  ReadDataEEP((char*) &STOREDCHECKSUM, EEPROM_SIZE, 2);
-  if (CALCCHECKSUM == STOREDCHECKSUM)
-    {
-      sprintf(buf, "CRC = %04X OK!", CALCCHECKSUM);
-    } else
-    {
-      sprintf(buf, "CRC = %04X BAD!", CALCCHECKSUM);
-      LCDSendStr(buf);
-      while (1);
-    }
-  DelayDisplayValue(40);
-  LCDSendCmd(CLR_DISP);
-  LCDSendCmd(DD_RAM_ADDR);
-  LCDSendStr("Datas from Flash");
-  LCDSendCmd(DD_RAM_ADDR2);
-  ReadFlashMemory();
-  LCDSendStr("OK!");
+    DelayDisplayValue(40);
+
+    LCDSendCmd(CLR_DISP);
+    LCDSendCmd(DD_RAM_ADDR);
+    LCDSendStr("Check EEPROM CRC");
+    LCDSendCmd(DD_RAM_ADDR2);
+    CALCCHECKSUM = gen_crc16(Read_b_eep, CHECKED_EEPROM_SIZE, 0);
+    ReadDataEEP((char*) &STOREDCHECKSUM, CRC_ADDRESS, 2);
+    if (CALCCHECKSUM == STOREDCHECKSUM)
+      {
+        ReadDataEEP((char*)&CHAN_SUMMAS, CHECKED_EEPROM_SIZE, sizeof(CHAN_SUMMAS));
+        sprintf(buf, "CRC = %04X OK!", CALCCHECKSUM);
+      } else
+      {
+      /* BAD checksum. The crc checksum is bad. The program will dig in the endless loop. */
+        LCDSendCmd(CLR_DISP);
+        LCDSendCmd(DD_RAM_ADDR);
+        sprintf(buf, "CRC = %04X BAD!", CALCCHECKSUM);
+        LCDSendStr(buf);
+        LCDSendCmd(DD_RAM_ADDR2);
+        sprintf(buf, "PUSH ENT TO DEF.");
+        LCDSendStr(buf);
+        /* Push enter to load the default values to EEPROM. */
+        while (CURRENT_MESSAGE != BUT_DN_LONG);
+        LCDSendCmd(CLR_DISP);
+
+        LCDSendCmd(DD_RAM_ADDR);
+        LCDSendStr("Write default");
+        LCDSendCmd(DD_RAM_ADDR2);
+        LCDSendStr("datas to FLASH!");
+        WriteStandardDatasToEEPROM();
+        CALCCHECKSUM = gen_crc16(Read_b_eep, CHECKED_EEPROM_SIZE, 0);
+        WriteDataEEP((char*)&CALCCHECKSUM, CRC_ADDRESS, 2);
+        ClearAllSummas();
+        WriteDataEEP((char*)&CHAN_SUMMAS, CHECKED_EEPROM_SIZE, sizeof(CHAN_SUMMAS)); 
+      }
+  }while (CALCCHECKSUM != STOREDCHECKSUM);
 
   return 0;
 }
@@ -273,7 +346,7 @@ int main(int argc, char** argv) {
   ResetADBuffers();
 
   InitButtons();
-
+  /* Flash check, and rewrite if did'nt OK. */
   WelcomeScreen();
 
   DRAW_STATE = DRAW_INIT;

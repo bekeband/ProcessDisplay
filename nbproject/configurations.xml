@@ -17,6 +17,7 @@
     </logicalFolder>
     <logicalFolder name="f1" displayName="MyDoc" projectFiles="true">
       <itemPath>mydoc/General Description</itemPath>
+      <itemPath>mydoc/User Guide</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"

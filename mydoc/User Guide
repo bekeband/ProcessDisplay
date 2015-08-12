@@ -10,4 +10,17 @@ After switch ON the main power
   "Process Display"
   "VERSION: 2.5"
 
-Check EEPROM CRC 
+Check EEPROM CRC
+
+There are no fail
+  "Check EEPROM CRC"
+  "CRC = XXXX OK!"
+
+Failure the CRC check.
+  "Check EEPROM CRC"
+  "CRC = XXXX BAD!"
+
+In cause of bad, or violent EEPROM content, you can set and load the standard EEPROM data.
+This is with UP and DOWN button push at the some time in the BAD display on indicator.
+
+

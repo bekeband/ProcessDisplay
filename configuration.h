@@ -135,6 +135,9 @@ extern "C" {
 #define BUTTON_DELAY_2  50
 #define BUT_NUMBER      4
 
+#define TMR5LVAL   0xDC
+#define TMR5HVAL   0x0B
+
 #define VERSION_DELAY   100
 
 typedef union  {
@@ -144,9 +147,18 @@ struct s_eeprom_data {
   float max_val;
   uint16_t min_eng;
   uint16_t max_eng;
+  uint8_t input_dim;
 } eeprom_datas;
 unsigned char chan_datas[32];
 } u_chan_datas;
+
+typedef struct {
+  float sum_1;
+  float sum_2;
+  uint8_t sum_dim;
+} s_summa_datas;
+
+typedef char s_dim_text[7];
 
 /* Exter declaration of interrupt.c. */
 void ResetADBuffers();
