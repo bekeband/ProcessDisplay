@@ -14,88 +14,32 @@
 #include "configuration.h"
 #include "LCDDriver.h"
 #include "globalextern.h"
+#include "init.h"
+#include "crc.h"
+
 /* EEPROM initialize. If define EEPROM_INIT then initialize EEPROM contents with
  general setting values. (The burning time mostly long than without EEPROM initialize.)*/
 
 #if defined (EEPROM_INIT)
   #include "EEPROM_D.h"
 #endif
-#include "crc.h"
+
 
 /* All channes datas to initialize features. */
 u_chan_datas CHAN_FEATS[MAX_AD_COUNT];
 s_summa_datas CHAN_SUMMAS[MAX_AD_COUNT];
 
 static DRAW_STATES DRAW_STATE = DRAW_INIT;
+static DISPLAY_STATES CURRENT_DISPLAY = MAIN_DISPLAY;
+static ADSET_STATES ADSET_STATE = AD_CHECK;
 
 uint16_t CHECKSUM;
-
-unsigned int old_ad_value;
-float new_data;
 
 const char* dim_table[] = {"m3/sec", "m3/min", "m3/hr", "kg/sec", "kg/min", "kg/hr", "t/sec", "t/min", "t/hr", "mm3", "cm3", "m3",
   "gramm", "dkg", "kg", "q", "t", "sec", "mins", "hours", "days", "week", "mount", "years", "mm", "cm", "m", "km"};
 
-void ReadDataEEP(char* d_ptr, int baddr, int size)
-{ int i;
-  for (i=0; i < size; i++)
-  {
-    *d_ptr++ = Read_b_eep(baddr++);
-  }
-}
+const char* format_table[] = {"%9.3f %s", "%5i"};
 
-void WriteDataEEP(unsigned char* d_ptr, int baddr, int size)
-{int i;
-  for (i = 0; i < size; i++)
-  {
-    Write_b_eep(baddr++, *d_ptr++);
-  }
-}
-
-void InitTimers()
-{
-
-  T5GCON  = 0b00000000;
-  TMR5L   = TMR5LVAL;
-  TMR5H   = TMR5HVAL;
-
-  T5CONbits.T5RD16 = 1;     /* Enables register read/write of Timer1/3/5 in one 16-bit operation */
-  T5CONbits.T5SYNC = 1;
-  T5CONbits.TMR5CS = 0b01;  /* Fosc/4 instruction clock source.*/
-  T5CONbits.T5CKPS = 0b11;  /*  11 = 1:8 Prescale value 10 = 1:4 Prescale value
-                                01 = 1:2 Prescale value 00 = 1:1 Prescale value */
-  T5CONbits.TMR5ON = 1;
-
-}
-
-void InitButtons()
-{
-
-  TRISB   = 0b11110001;  // RB4, RB5, RB6, RB7 inputs
-  PORTE = 0;
-  LATE = 0;
-  ANSELE = 0;
-  TRISE = 0b101;
-}
-
-void InitAD()
-{
-  OpenADC( ADC_FOSC_32 & ADC_RIGHT_JUST & ADC_12_TAD, ADC_CH0 & ADC_INT_ON, 15 );
-  ADC_INT_ENABLE();
-}
-
-void InitADValues()
-{ int i;
-  for (i = 0; i < MAX_AD_COUNT; i++)
-  {
-    CHAN_FEATS[i].eeprom_datas.input_dim = 0;     // input dim %
-    CHAN_FEATS[i].eeprom_datas.input_type = 0;    // input type 4-20 mA
-    CHAN_FEATS[i].eeprom_datas.min_eng = 0;       //6547;    // MIN. input integer value
-    CHAN_FEATS[i].eeprom_datas.max_eng = 32736;   // MAX. input integer value
-    CHAN_FEATS[i].eeprom_datas.min_val = 0;       //
-    CHAN_FEATS[i].eeprom_datas.max_val = 11.11;     //
-  }
-}
 
 int WriteStandardDatasToEEPROM()
 {
@@ -123,31 +67,55 @@ int ReadFlashMemory()
   return 0;
 }
 
+void PrintRawValue(int ramaddr, int pos, int channel)
+{char buf[20];
+  if (NEW_AD_CHANGES[0])
+  {
+    LCDSendCmd(ramaddr + pos);
+    sprintf(buf, format_table[1], AD_DATA[channel]);
+    LCDSendStr(buf);
+    NEW_AD_CHANGES[0] = 0;
+  }
+}
+
+void PrintMeasValue(int ramaddr, int pos, int channel)
+{ char buf[20];
+  if (NEW_AD_CHANGES[0])
+  {
+    LCDSendCmd(ramaddr + pos);
+    sprintf(buf, format_table[0], GetADValue(channel), dim_table[CHAN_FEATS[channel].eeprom_datas.input_dim]);
+    LCDSendStr(buf);
+    NEW_AD_CHANGES[0] = 0;
+  }
+}
+
 void MainDisplay()
 { char buf[20];
-
   switch (DRAW_STATE)
   {
+
     case DRAW_INIT:
       DelayDisplayValue(40);
       LCDSendCmd(CLR_DISP);
 
       DRAW_STATE = DRAW_RUN;
-      
+      SetADChanges(1);
       break;
+
     case DRAW_RUN:
 
      if (NEW_SUMMA_COUNT)
-          {
-            new_data = GetADValue(0);
-            CHAN_SUMMAS[0].sum_1 += new_data;
-            LCDSendCmd(DD_RAM_ADDR2);
-            sprintf(buf, "%12.1f  %s", CHAN_SUMMAS[0].sum_1, dim_table[CHAN_SUMMAS[0].sum_dim]);
-            LCDSendStr(buf);
-            NEW_SUMMA_COUNT = 0;
-          }
+      {
+        CHAN_SUMMAS[0].sum_1 += GetADValue(0);
+        LCDSendCmd(DD_RAM_ADDR2);
+        sprintf(buf, "%12.1f  %s", CHAN_SUMMAS[0].sum_1, dim_table[CHAN_SUMMAS[0].sum_dim]);
+        LCDSendStr(buf);
+        NEW_SUMMA_COUNT = 0;
+     }
 
-      if (NEW_AD_DATA)
+     PrintMeasValue(DD_RAM_ADDR2, 2, 0);
+
+/*      if (NEW_AD_DATA)
         {
           NEW_AD_DATA = 0;
  
@@ -156,16 +124,26 @@ void MainDisplay()
           old_ad_value = AD_DATA[0];
           new_data = GetADValue(0);
           LCDSendCmd(DD_RAM_ADDR);
-          sprintf(buf, "%9.2f %s", new_data, dim_table[CHAN_FEATS[0].eeprom_datas.input_dim]);
+          sprintf(buf, "%9.3f %s", new_data, dim_table[CHAN_FEATS[0].eeprom_datas.input_dim]);
           LCDSendStr(buf);
         }
-      };
-      break;
-    case DRAW_EXIT:
+      };*/
+      if (CURRENT_MESSAGE == BUT_DN_LONG)
+      {
+        CURRENT_MESSAGE = 0;
+        DRAW_STATE = DRAW_EXIT;
+      }
 
       break;
+
+    case DRAW_EXIT:
+      CURRENT_DISPLAY = ADSET_DISPLAY;
+      CURRENT_MESSAGE = 0;
+      DRAW_STATE = DRAW_INIT;
+      break;
+      
   }
-};
+}
 
 void IOTestDisplay()
 {
@@ -227,7 +205,9 @@ void ClearAllSummas()
   }
 }
 
-int ADTestDisplay(int channel)
+/* AD low, and high level setting display. */
+
+int ADSetDisplay(int channel)
 { char buf[20];
   switch (DRAW_STATE)
   {
@@ -235,37 +215,75 @@ int ADTestDisplay(int channel)
       LCD_LIGHT = 1;
       LCDSendCmd(DISP_ON);
       LCDSendCmd(CLR_DISP);
-      LCDSendCmd(CUR_ON_UNDER);
       LCDSendCmd(DD_RAM_ADDR);
+      LCDSendStr("Set low mA.");
+      LCDSendCmd(DD_RAM_ADDR2);
 
       LCDSendStr("CHN ");
-      LCDSendCmd(DD_RAM_ADDR2);
-      LCDSendStr("VAL = ");
-      old_ad_value = -30000;
+
       DRAW_STATE = DRAW_RUN;
+      ADSET_STATE = AD_CHECK;
+      SetADChanges(1);
       break;
     case DRAW_RUN:
-      if (NEW_AD_DATA)
-        {
-          NEW_AD_DATA = 0;
 
-        if (AD_DATA[channel] != old_ad_value)
-        {
-          old_ad_value = AD_DATA[channel];
-          new_data = GetADValue(channel);
-          LCDSendCmd(DD_RAM_ADDR + 4);
-          sprintf(buf, "%1i = %5i", channel, old_ad_value);
-          LCDSendStr(buf);
-          LCDSendCmd(DD_RAM_ADDR2 + 4);
-          sprintf(buf, "%7.3f", new_data);
-          LCDSendStr(buf);
-        }
-      };
+      switch (ADSET_STATE)
+      {
+        case AD_CHECK:
+
+        PrintRawValue(DD_RAM_ADDR2, 4, 0);
+
+/*        if (NEW_AD_DATA)
+          {
+            NEW_AD_DATA = 0;
+
+          if (AD_DATA[channel] != old_ad_value)
+          {
+            old_ad_value = AD_DATA[channel];
+            new_data = GetADValue(channel);
+            LCDSendCmd(DD_RAM_ADDR2 + 4);
+            sprintf(buf, "%1i = %5i", channel, old_ad_value);
+            LCDSendStr(buf);
+          }
+          };*/
+          if (CURRENT_MESSAGE == BUT_DN_LONG)
+          {
+            CURRENT_MESSAGE = 0;
+            ADSET_STATE = LOW_SET;
+          };
+
+          break;
+          case LOW_SET:
+
+            LCDSendCmd(DD_RAM_ADDR + 13);
+            LCDSendStr("ESC");
+            PrintRawValue(DD_RAM_ADDR2, 0, 0);
+
+/*            LCDSendCmd(DD_RAM_ADDR2);
+            sprintf(buf, "CH%1i L=%5i   OK", channel, AD_DATA[channel]);
+            LCDSendStr(buf);*/
+
+            if (CURRENT_MESSAGE == BUT_DN)
+            {
+              CURRENT_MESSAGE = 0;
+              CHAN_FEATS[channel].eeprom_datas.min_eng = AD_DATA[channel];
+              ADSET_STATE = AD_CHECK;
+            } else if (CURRENT_MESSAGE == BUT_UP)
+            {
+              CURRENT_MESSAGE = 0;
+              DRAW_STATE = DRAW_EXIT;
+            }
+            break;
+        case HIGH_SET:
+          break;
+      }
 
       break;
 
     case DRAW_EXIT:
-
+      CURRENT_DISPLAY = MAIN_DISPLAY;
+      CURRENT_MESSAGE = 0;
+      DRAW_STATE = DRAW_INIT;
       break;
   }
   return  1;
@@ -273,7 +291,6 @@ int ADTestDisplay(int channel)
 
 int WelcomeScreen()
 { char buf[20];
-//  uint16_t EEPROM_SIZE =
   uint16_t CHECKED_EEPROM_SIZE = sizeof(CHAN_FEATS);
   uint16_t CRC_ADDRESS = _EEPROMSIZE - 2; // Last word the CRC checksum.
   uint16_t CALCCHECKSUM;
@@ -285,7 +302,7 @@ int WelcomeScreen()
   LCDSendCmd(DD_RAM_ADDR);
   LCDSendStr("Process Display");
   LCDSendCmd(DD_RAM_ADDR2);
-  sprintf(buf, "VERSION: %i.%i", VER_H, VER_L);
+  mysprintf(buf, "VERSION: %i.%i", VER_H, VER_L);
   LCDSendStr(buf);
 
   do
@@ -315,6 +332,7 @@ int WelcomeScreen()
         LCDSendStr(buf);
         /* Push enter to load the default values to EEPROM. */
         while (CURRENT_MESSAGE != BUT_DN_LONG);
+        CURRENT_MESSAGE = 0;
         LCDSendCmd(CLR_DISP);
 
         LCDSendCmd(DD_RAM_ADDR);
@@ -352,20 +370,15 @@ int main(int argc, char** argv) {
   DRAW_STATE = DRAW_INIT;
 
   while (1){
-
-/*    if (CURRENT_MESSAGE == BUT_UP_LONG)
+    switch (CURRENT_DISPLAY)
     {
-      LED1 = !LED1;
-      CURRENT_MESSAGE = 0;
-    } else
-      if (CURRENT_MESSAGE == BUT_UP_MESSAGE)
-      {
-        LED2 = !LED2;
-        CURRENT_MESSAGE = 0;
-      }*/
-    MainDisplay();
-//    BUTTestDisplay();
-//    ADTestDisplay(0);
+      case MAIN_DISPLAY:
+        MainDisplay();
+      break;
+      case ADSET_DISPLAY:
+        ADSetDisplay(0);
+      break;
+    }
   }
   return (EXIT_SUCCESS);
 }

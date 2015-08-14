@@ -22,6 +22,8 @@ extern "C" {
 extern int NEW_AD_DATA;
 extern int NEW_SUMMA_COUNT;
 extern unsigned long AD_DATA[MAX_AD_COUNT];
+extern uint8_t NEW_AD_DATAS[MAX_AD_COUNT];
+extern uint8_t NEW_AD_CHANGES[MAX_AD_COUNT];
 extern int CURRENT_MESSAGE;
 extern int TIMER_COUNTER_VALUE;
 
@@ -39,16 +41,27 @@ typedef int (*DRAW_FUNC) (int, int);
 ********************************************************************/
 typedef enum
 {
-    DRAW_INIT,
-    DRAW_RUN,
-    DRAW_ROUND,
-    DRAW_TEXT,
-    DRAW_TEXT_RUN,
-    DRAW_FOCUS,
-    DRAW_EXIT
+  DRAW_INIT,
+  DRAW_RUN,
+  DRAW_ROUND,
+  DRAW_TEXT,
+  DRAW_TEXT_RUN,
+  DRAW_FOCUS,
+  DRAW_EXIT
 } DRAW_STATES;
+typedef enum
+{
+  MAIN_DISPLAY,
+  IOTEST_DISPLAY,
+  ADSET_DISPLAY
+} DISPLAY_STATES;
 
-
+typedef enum
+{
+  AD_CHECK,
+  LOW_SET,
+  HIGH_SET
+}ADSET_STATES;
 
 #ifdef	__cplusplus
 }

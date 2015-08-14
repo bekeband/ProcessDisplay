@@ -7,6 +7,10 @@
 /* AD datas varialbles. */
 unsigned long AD_DATA[MAX_AD_COUNT];
 unsigned long AD_BUFFER[MAX_AD_COUNT];
+uint16_t OLD_AD_VALUES[MAX_AD_COUNT];
+uint8_t NEW_AD_DATAS[MAX_AD_COUNT];
+uint8_t NEW_AD_CHANGES[MAX_AD_COUNT];
+
 int AD_COUNTER = 0;
 int AD_AVERAGE_FACTOR = DEFAULT_AD_AVERAGE_FACTOR;
 int AD_AVERAGE_COUNTER;
@@ -61,7 +65,7 @@ if (PIR5bits.TMR5IF)
   if ((SEC_TIMER++) == 40)
   {
     NEW_SUMMA_COUNT = 1;
-    LED1 = !LED1;
+//    LED1 = !LED1;
     SEC_TIMER = 0;
   }
   TIMER_COUNTER_VALUE++;
@@ -158,9 +162,17 @@ if (PIR1bits.ADIF)
       /* Next AD data... */
       if (++AD_COUNTER == MAX_AD_COUNT)
       {
+        NEW_AD_DATAS[AD_COUNTER] = 1;
         NEW_AD_DATA = 1;
         AD_COUNTER = 0;
+        /* if the new A/D datas and changes as well. */
+        if (OLD_AD_VALUES[AD_COUNTER] != AD_DATA[AD_COUNTER])
+        {
+          NEW_AD_CHANGES[AD_COUNTER] = 1;
+        }
       };
+      /* TODO majd kivenni !*/
+//      SetChanADC(0b11111);
       SetChanADC(AD_COUNTER);
     }
     AD_AVERAGE_COUNTER++;
