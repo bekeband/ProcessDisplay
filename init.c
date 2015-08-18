@@ -33,6 +33,8 @@ void InitTimers()
                                 01 = 1:2 Prescale value 00 = 1:1 Prescale value */
   T5CONbits.TMR5ON = 1;
 
+//  T0CONbits.TMR0ON
+
 }
 
 void InitButtons()
@@ -84,7 +86,7 @@ void SetADChanges(uint8_t new_value)
 
 int   mysprintf(char* buffer, const char* format, ...)
 { va_list ap; int i = 0; char buf[20]; int width = 0;
-  va_start(ap, format);
+/*  va_start(ap, format);
   while(format[i])
   {
     if (format[i] == '%')
@@ -108,5 +110,6 @@ int   mysprintf(char* buffer, const char* format, ...)
   }
   exit:
   buffer[i] = '\0';
-  va_end(ap);
+  va_end(ap);*/
+return 0;
 }

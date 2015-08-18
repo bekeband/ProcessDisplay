@@ -33,7 +33,6 @@ static DRAW_STATES DRAW_STATE = DRAW_INIT;
 static DISPLAY_STATES CURRENT_DISPLAY = MAIN_DISPLAY;
 static ADSET_STATES ADSET_STATE = AD_CHECK;
 
-uint16_t CHECKSUM;
 
 const char* dim_table[] = {"m3/sec", "m3/min", "m3/hr", "kg/sec", "kg/min", "kg/hr", "t/sec", "t/min", "t/hr", "mm3", "cm3", "m3",
   "gramm", "dkg", "kg", "q", "t", "sec", "mins", "hours", "days", "week", "mount", "years", "mm", "cm", "m", "km"};
@@ -80,12 +79,12 @@ void PrintRawValue(int ramaddr, int pos, int channel)
 
 void PrintMeasValue(int ramaddr, int pos, int channel)
 { char buf[20];
-  if (NEW_AD_CHANGES[0])
+  if (NEW_AD_CHANGES[channel])
   {
     LCDSendCmd(ramaddr + pos);
     sprintf(buf, format_table[0], GetADValue(channel), dim_table[CHAN_FEATS[channel].eeprom_datas.input_dim]);
     LCDSendStr(buf);
-    NEW_AD_CHANGES[0] = 0;
+    NEW_AD_CHANGES[channel] = 0;
   }
 }
 
@@ -93,9 +92,7 @@ void MainDisplay()
 { char buf[20];
   switch (DRAW_STATE)
   {
-
     case DRAW_INIT:
-      DelayDisplayValue(40);
       LCDSendCmd(CLR_DISP);
 
       DRAW_STATE = DRAW_RUN;
@@ -113,21 +110,8 @@ void MainDisplay()
         NEW_SUMMA_COUNT = 0;
      }
 
-     PrintMeasValue(DD_RAM_ADDR2, 2, 0);
+     PrintMeasValue(DD_RAM_ADDR, 2, 0);
 
-/*      if (NEW_AD_DATA)
-        {
-          NEW_AD_DATA = 0;
- 
-        if (AD_DATA[0] != old_ad_value)
-        {
-          old_ad_value = AD_DATA[0];
-          new_data = GetADValue(0);
-          LCDSendCmd(DD_RAM_ADDR);
-          sprintf(buf, "%9.3f %s", new_data, dim_table[CHAN_FEATS[0].eeprom_datas.input_dim]);
-          LCDSendStr(buf);
-        }
-      };*/
       if (CURRENT_MESSAGE == BUT_DN_LONG)
       {
         CURRENT_MESSAGE = 0;
@@ -205,10 +189,18 @@ void ClearAllSummas()
   }
 }
 
+void PrintButtonLabels(const char* BUP, const char* BDN)
+{
+  LCDSendCmd(DD_RAM_ADDR + 13);
+  LCDSendStr(BUP);
+  LCDSendCmd(DD_RAM_ADDR2 + 13);
+  LCDSendStr(BDN);
+}
+
 /* AD low, and high level setting display. */
 
 int ADSetDisplay(int channel)
-{ char buf[20];
+{ //char buf[20];
   switch (DRAW_STATE)
   {
     case DRAW_INIT:
@@ -216,13 +208,16 @@ int ADSetDisplay(int channel)
       LCDSendCmd(DISP_ON);
       LCDSendCmd(CLR_DISP);
       LCDSendCmd(DD_RAM_ADDR);
-      LCDSendStr("Set low mA.");
+      if (CHAN_FEATS[channel].eeprom_datas.input_type == 0)
+      { LCDSendStr("LOW 4 mA "); } else
+      { LCDSendStr("LOW 0 mA "); }
       LCDSendCmd(DD_RAM_ADDR2);
 
-      LCDSendStr("CHN ");
+      LCDSendStr("VAL =  ");
 
       DRAW_STATE = DRAW_RUN;
       ADSET_STATE = AD_CHECK;
+      PrintButtonLabels("ESC", "OK");
       SetADChanges(1);
       break;
     case DRAW_RUN:
@@ -230,51 +225,78 @@ int ADSetDisplay(int channel)
       switch (ADSET_STATE)
       {
         case AD_CHECK:
-
-        PrintRawValue(DD_RAM_ADDR2, 4, 0);
-
-/*        if (NEW_AD_DATA)
-          {
-            NEW_AD_DATA = 0;
-
-          if (AD_DATA[channel] != old_ad_value)
-          {
-            old_ad_value = AD_DATA[channel];
-            new_data = GetADValue(channel);
-            LCDSendCmd(DD_RAM_ADDR2 + 4);
-            sprintf(buf, "%1i = %5i", channel, old_ad_value);
-            LCDSendStr(buf);
-          }
-          };*/
-          if (CURRENT_MESSAGE == BUT_DN_LONG)
+        /* RAW value data print the 2. line.*/
+        PrintRawValue(DD_RAM_ADDR2, 6, 0);
+        
+          if (CURRENT_MESSAGE == BUT_DN_MESSAGE)
           {
             CURRENT_MESSAGE = 0;
             ADSET_STATE = LOW_SET;
           };
-
+          if (CURRENT_MESSAGE == BUT_UP_MESSAGE)
+          { /* Exit the setting program. */
+            CURRENT_MESSAGE = 0;
+            DRAW_STATE = DRAW_EXIT;
+          };
           break;
           case LOW_SET:
 
-            LCDSendCmd(DD_RAM_ADDR + 13);
-            LCDSendStr("ESC");
-            PrintRawValue(DD_RAM_ADDR2, 0, 0);
+            CURRENT_MESSAGE = 0;
+            CHAN_FEATS[channel].eeprom_datas.min_eng = AD_DATA[channel];
+            ADSET_STATE = HIGH_INIT;
+            PrintButtonLabels("ESC", "HIG");  // To high setting.
 
-/*            LCDSendCmd(DD_RAM_ADDR2);
-            sprintf(buf, "CH%1i L=%5i   OK", channel, AD_DATA[channel]);
-            LCDSendStr(buf);*/
-
-            if (CURRENT_MESSAGE == BUT_DN)
-            {
-              CURRENT_MESSAGE = 0;
-              CHAN_FEATS[channel].eeprom_datas.min_eng = AD_DATA[channel];
-              ADSET_STATE = AD_CHECK;
-            } else if (CURRENT_MESSAGE == BUT_UP)
-            {
-              CURRENT_MESSAGE = 0;
-              DRAW_STATE = DRAW_EXIT;
-            }
+          if (CURRENT_MESSAGE == BUT_DN_MESSAGE)
+          {
+            CURRENT_MESSAGE = 0;
+            ADSET_STATE = HIGH_INIT;
+          };
+          if (CURRENT_MESSAGE == BUT_UP_MESSAGE)
+          { /* Exit the setting program. */
+            CURRENT_MESSAGE = 0;
+            DRAW_STATE = DRAW_EXIT;
+          };
             break;
+        case HIGH_INIT:
+
+            LCDSendCmd(DD_RAM_ADDR);
+            LCDSendStr("HIGH 20 mA ");
+            LCDSendCmd(DD_RAM_ADDR2);
+
+            LCDSendStr("VAL =  ");
+
+            DRAW_STATE = DRAW_RUN;
+            ADSET_STATE = HIGH_CHECK;
+            PrintButtonLabels("ESC", "OK ");
+            SetADChanges(1);
+
+          break;
+        case HIGH_CHECK:
+        /* RAW value data print the 2. line.*/
+        PrintRawValue(DD_RAM_ADDR2, 6, 0);
+
+          if (CURRENT_MESSAGE == BUT_DN_MESSAGE)
+          {
+            CURRENT_MESSAGE = 0;
+            ADSET_STATE = HIGH_SET;
+          };
+          if (CURRENT_MESSAGE == BUT_UP_MESSAGE)
+          { /* Exit the setting program. */
+            CURRENT_MESSAGE = 0;
+            DRAW_STATE = DRAW_EXIT;
+          };
+          break;
         case HIGH_SET:
+            CHAN_FEATS[channel].eeprom_datas.max_eng = AD_DATA[channel];
+            ADSET_STATE = HIGH_CHECK;
+            PrintButtonLabels("", "OK");  // To end.
+
+          if (CURRENT_MESSAGE == BUT_DN_MESSAGE)
+          {
+            CURRENT_MESSAGE = 0;
+            DRAW_STATE = DRAW_EXIT;
+          };
+
           break;
       }
 
@@ -302,13 +324,13 @@ int WelcomeScreen()
   LCDSendCmd(DD_RAM_ADDR);
   LCDSendStr("Process Display");
   LCDSendCmd(DD_RAM_ADDR2);
-  mysprintf(buf, "VERSION: %i.%i", VER_H, VER_L);
+  sprintf(buf, "VERSION: %i.%i", VER_H, VER_L);
   LCDSendStr(buf);
 
   do
   {
 
-    DelayDisplayValue(40);
+    DelayDisplayValue(80);
 
     LCDSendCmd(CLR_DISP);
     LCDSendCmd(DD_RAM_ADDR);
@@ -357,7 +379,7 @@ int main(int argc, char** argv) {
   InitLCD();
   InitAD();
   InitADValues();
-  LED2 = 0;
+//  LED2 = 0;
   
   ei();
 
@@ -379,6 +401,7 @@ int main(int argc, char** argv) {
         ADSetDisplay(0);
       break;
     }
+  CURRENT_MESSAGE = 0;
   }
   return (EXIT_SUCCESS);
 }

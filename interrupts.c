@@ -14,7 +14,6 @@ uint8_t NEW_AD_CHANGES[MAX_AD_COUNT];
 int AD_COUNTER = 0;
 int AD_AVERAGE_FACTOR = DEFAULT_AD_AVERAGE_FACTOR;
 int AD_AVERAGE_COUNTER;
-int NEW_AD_DATA = 0;
 int NEW_SUMMA_COUNT = 0;
 
 int AD_RESTART_DIS = 0;
@@ -28,7 +27,7 @@ void ResetADBuffers()
 { int i;
   ADC_INT_DISABLE();
   AD_AVERAGE_COUNTER = 0;
-  NEW_AD_DATA = 0;
+//  NEW_AD_DATA = 0;
   AD_COUNTER = 0;
   for (i = 0; i < MAX_AD_COUNT; i++)
   {
@@ -45,30 +44,29 @@ int INHIBIT[BUT_NUMBER] = {0,0,0,0};
 int SEC_TIMER = 0;
 
 void interrupt isr(void)
-{ int i;
-
-if (INTCONbits.RBIF)  // RB port changed interrupt ?
 {
-  INTCONbits.RBIF = 0;
-}
-
-if (INTCONbits.T0IF)  // T0 timer interrupt
-{
-  INTCONbits.T0IF = 0;
-}
-
-if (PIR5bits.TMR5IF)
-{
-  TMR5L   = TMR5LVAL;
-  TMR5H   = TMR5HVAL;
-  PIR5bits.TMR5IF = 0;
-  if ((SEC_TIMER++) == 40)
+  if (INTCONbits.RBIF)  // RB port changed interrupt ?
   {
-    NEW_SUMMA_COUNT = 1;
-//    LED1 = !LED1;
-    SEC_TIMER = 0;
+    INTCONbits.RBIF = 0;
   }
-  TIMER_COUNTER_VALUE++;
+
+  if (INTCONbits.T0IF)  // T0 timer interrupt
+  {
+    INTCONbits.T0IF = 0;
+  }
+
+  if (PIR5bits.TMR5IF)
+  {
+    TMR5L   = TMR5LVAL;
+    TMR5H   = TMR5HVAL;
+    PIR5bits.TMR5IF = 0;
+    if ((SEC_TIMER++) == 40)
+    {
+      NEW_SUMMA_COUNT = 1;
+//    LED1 = !LED1;
+      SEC_TIMER = 0;
+    }
+    TIMER_COUNTER_VALUE++;
   /* Button inputs and debounce programs. */
 /* ------------------------------- BUTTON UP --------------------------------*/
   if  (!BUT_UP)
@@ -163,7 +161,7 @@ if (PIR1bits.ADIF)
       if (++AD_COUNTER == MAX_AD_COUNT)
       {
         NEW_AD_DATAS[AD_COUNTER] = 1;
-        NEW_AD_DATA = 1;
+//        NEW_AD_DATA = 1;
         AD_COUNTER = 0;
         /* if the new A/D datas and changes as well. */
         if (OLD_AD_VALUES[AD_COUNTER] != AD_DATA[AD_COUNTER])

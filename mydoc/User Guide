@@ -20,6 +20,8 @@ Failure the CRC check.
   "Check EEPROM CRC"
   "CRC = XXXX BAD!"
 
+
+
 In cause of bad, or violent EEPROM content, you can set and load the standard EEPROM data.
 This is with UP and DOWN button push at the some time in the BAD display on indicator.
 

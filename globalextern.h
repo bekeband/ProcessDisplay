@@ -60,6 +60,8 @@ typedef enum
 {
   AD_CHECK,
   LOW_SET,
+  HIGH_INIT,
+  HIGH_CHECK,
   HIGH_SET
 }ADSET_STATES;
 

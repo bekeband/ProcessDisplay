@@ -132,7 +132,7 @@ extern "C" {
 #define   BUT_ESC_LONG       0x978
 
 #define BUTTON_DELAY    4
-#define BUTTON_DELAY_2  50
+#define BUTTON_DELAY_2  30
 #define BUT_NUMBER      4
 
 #define TMR5LVAL   0xDC
@@ -142,7 +142,7 @@ extern "C" {
 
 typedef union  {
 struct s_eeprom_data {
-  uint8_t input_type;
+  uint8_t input_type; // 0 = 4 - 20 mA, 1 = 0- 20 mA
   float min_val;
   float max_val;
   uint16_t min_eng;
