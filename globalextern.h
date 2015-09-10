@@ -12,6 +12,8 @@
 extern "C" {
 #endif
 
+#include "configuration.h"
+
   struct s_ADENG_VALUE {
     int mineng;
     int maxeng;
@@ -19,13 +21,13 @@ extern "C" {
     float maxvalue;
   };
 
-extern int NEW_AD_DATA;
-extern int NEW_SUMMA_COUNT;
-extern unsigned long AD_DATA[MAX_AD_COUNT];
-extern uint8_t NEW_AD_DATAS[MAX_AD_COUNT];
-extern uint8_t NEW_AD_CHANGES[MAX_AD_COUNT];
-extern int CURRENT_MESSAGE;
-extern int TIMER_COUNTER_VALUE;
+extern volatile int NEW_AD_DATA;
+extern volatile int NEW_SUMMA_COUNT;
+extern volatile unsigned long AD_DATA[MAX_AD_COUNT];
+extern volatile uint8_t NEW_AD_DATAS[MAX_AD_COUNT];
+extern volatile uint8_t NEW_AD_CHANGES[MAX_AD_COUNT];
+extern volatile int CURRENT_MESSAGE;
+extern volatile int TIMER_COUNTER_VALUE;
 
 
 /* MESSAGE_FUNC(int, int) */
@@ -53,16 +55,19 @@ typedef enum
 {
   MAIN_DISPLAY,
   IOTEST_DISPLAY,
-  ADSET_DISPLAY
+  ADSET_DISPLAY,
+  TOTALIZER_DISPLAY
 } DISPLAY_STATES;
 
 typedef enum
 {
+  AD_SET_INIT,
   AD_CHECK,
   LOW_SET,
   HIGH_INIT,
   HIGH_CHECK,
-  HIGH_SET
+  HIGH_SET,
+  AD_SET_EXIT
 }ADSET_STATES;
 
 #ifdef	__cplusplus

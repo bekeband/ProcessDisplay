@@ -5,20 +5,20 @@
 #include "globalextern.h"
 
 /* AD datas varialbles. */
-unsigned long AD_DATA[MAX_AD_COUNT];
-unsigned long AD_BUFFER[MAX_AD_COUNT];
-uint16_t OLD_AD_VALUES[MAX_AD_COUNT];
-uint8_t NEW_AD_DATAS[MAX_AD_COUNT];
-uint8_t NEW_AD_CHANGES[MAX_AD_COUNT];
+volatile unsigned long AD_DATA[MAX_AD_COUNT];
+volatile unsigned long AD_BUFFER[MAX_AD_COUNT];
+volatile uint16_t OLD_AD_VALUES[MAX_AD_COUNT];
+volatile uint8_t NEW_AD_DATAS[MAX_AD_COUNT];
+volatile uint8_t NEW_AD_CHANGES[MAX_AD_COUNT];
 
-int AD_COUNTER = 0;
-int AD_AVERAGE_FACTOR = DEFAULT_AD_AVERAGE_FACTOR;
-int AD_AVERAGE_COUNTER;
-int NEW_SUMMA_COUNT = 0;
+volatile int AD_COUNTER = 0;
+volatile int AD_AVERAGE_FACTOR = DEFAULT_AD_AVERAGE_FACTOR;
+volatile int AD_AVERAGE_COUNTER;
+volatile int NEW_SUMMA_COUNT = 0;
 
 int AD_RESTART_DIS = 0;
 
-int TIMER_COUNTER_VALUE;
+volatile int TIMER_COUNTER_VALUE;
 
 /* The one interrupt routine, whitch handle all interrupts. */
 
@@ -38,9 +38,9 @@ void ResetADBuffers()
   ConvertADC();
 }
 
-int CURRENT_MESSAGE = 0;
-int BUTTON_COUNTER[BUT_NUMBER] = {0,0,0,0};
-int INHIBIT[BUT_NUMBER] = {0,0,0,0};
+volatile int CURRENT_MESSAGE = 0;
+volatile int BUTTON_COUNTER[BUT_NUMBER] = {0,0,0,0};
+volatile int INHIBIT[BUT_NUMBER] = {0,0,0,0};
 int SEC_TIMER = 0;
 
 void interrupt isr(void)

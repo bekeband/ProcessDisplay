@@ -45,17 +45,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c interrupts.c LCDDriver.c crc.c init.c
+SOURCEFILES_QUOTED_IF_SPACED=main.c interrupts.c LCDDriver.c crc.c init.c ADSetDisplay.c tables.c BUTTestDisplay.c IOTestDisplay.c TOTDisplay.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.p1 ${OBJECTDIR}/interrupts.p1 ${OBJECTDIR}/LCDDriver.p1 ${OBJECTDIR}/crc.p1 ${OBJECTDIR}/init.p1
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.p1.d ${OBJECTDIR}/interrupts.p1.d ${OBJECTDIR}/LCDDriver.p1.d ${OBJECTDIR}/crc.p1.d ${OBJECTDIR}/init.p1.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.p1 ${OBJECTDIR}/interrupts.p1 ${OBJECTDIR}/LCDDriver.p1 ${OBJECTDIR}/crc.p1 ${OBJECTDIR}/init.p1 ${OBJECTDIR}/ADSetDisplay.p1 ${OBJECTDIR}/tables.p1 ${OBJECTDIR}/BUTTestDisplay.p1 ${OBJECTDIR}/IOTestDisplay.p1 ${OBJECTDIR}/TOTDisplay.p1
+POSSIBLE_DEPFILES=${OBJECTDIR}/main.p1.d ${OBJECTDIR}/interrupts.p1.d ${OBJECTDIR}/LCDDriver.p1.d ${OBJECTDIR}/crc.p1.d ${OBJECTDIR}/init.p1.d ${OBJECTDIR}/ADSetDisplay.p1.d ${OBJECTDIR}/tables.p1.d ${OBJECTDIR}/BUTTestDisplay.p1.d ${OBJECTDIR}/IOTestDisplay.p1.d ${OBJECTDIR}/TOTDisplay.p1.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.p1 ${OBJECTDIR}/interrupts.p1 ${OBJECTDIR}/LCDDriver.p1 ${OBJECTDIR}/crc.p1 ${OBJECTDIR}/init.p1
+OBJECTFILES=${OBJECTDIR}/main.p1 ${OBJECTDIR}/interrupts.p1 ${OBJECTDIR}/LCDDriver.p1 ${OBJECTDIR}/crc.p1 ${OBJECTDIR}/init.p1 ${OBJECTDIR}/ADSetDisplay.p1 ${OBJECTDIR}/tables.p1 ${OBJECTDIR}/BUTTestDisplay.p1 ${OBJECTDIR}/IOTestDisplay.p1 ${OBJECTDIR}/TOTDisplay.p1
 
 # Source Files
-SOURCEFILES=main.c interrupts.c LCDDriver.c crc.c init.c
+SOURCEFILES=main.c interrupts.c LCDDriver.c crc.c init.c ADSetDisplay.c tables.c BUTTestDisplay.c IOTestDisplay.c TOTDisplay.c
 
 
 CFLAGS=
@@ -121,6 +121,46 @@ ${OBJECTDIR}/init.p1: init.c  nbproject/Makefile-${CND_CONF}.mk
 	@-${MV} ${OBJECTDIR}/init.d ${OBJECTDIR}/init.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/init.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
+${OBJECTDIR}/ADSetDisplay.p1: ADSetDisplay.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/ADSetDisplay.p1.d 
+	@${RM} ${OBJECTDIR}/ADSetDisplay.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  -D__DEBUG=1 --debugger=pickit3  --double=32 --float=32 --emi=wordwrite --opt=default,+asm,+asmfile,-speed,+space,+debug --addrqual=ignore --mode=pro -P -N255 --warn=0 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-download,+config,+clib,+plib --output=-mcof,+elf "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/ADSetDisplay.p1  ADSetDisplay.c 
+	@-${MV} ${OBJECTDIR}/ADSetDisplay.d ${OBJECTDIR}/ADSetDisplay.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/ADSetDisplay.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/tables.p1: tables.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/tables.p1.d 
+	@${RM} ${OBJECTDIR}/tables.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  -D__DEBUG=1 --debugger=pickit3  --double=32 --float=32 --emi=wordwrite --opt=default,+asm,+asmfile,-speed,+space,+debug --addrqual=ignore --mode=pro -P -N255 --warn=0 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-download,+config,+clib,+plib --output=-mcof,+elf "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/tables.p1  tables.c 
+	@-${MV} ${OBJECTDIR}/tables.d ${OBJECTDIR}/tables.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/tables.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/BUTTestDisplay.p1: BUTTestDisplay.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/BUTTestDisplay.p1.d 
+	@${RM} ${OBJECTDIR}/BUTTestDisplay.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  -D__DEBUG=1 --debugger=pickit3  --double=32 --float=32 --emi=wordwrite --opt=default,+asm,+asmfile,-speed,+space,+debug --addrqual=ignore --mode=pro -P -N255 --warn=0 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-download,+config,+clib,+plib --output=-mcof,+elf "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/BUTTestDisplay.p1  BUTTestDisplay.c 
+	@-${MV} ${OBJECTDIR}/BUTTestDisplay.d ${OBJECTDIR}/BUTTestDisplay.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/BUTTestDisplay.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/IOTestDisplay.p1: IOTestDisplay.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/IOTestDisplay.p1.d 
+	@${RM} ${OBJECTDIR}/IOTestDisplay.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  -D__DEBUG=1 --debugger=pickit3  --double=32 --float=32 --emi=wordwrite --opt=default,+asm,+asmfile,-speed,+space,+debug --addrqual=ignore --mode=pro -P -N255 --warn=0 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-download,+config,+clib,+plib --output=-mcof,+elf "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/IOTestDisplay.p1  IOTestDisplay.c 
+	@-${MV} ${OBJECTDIR}/IOTestDisplay.d ${OBJECTDIR}/IOTestDisplay.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/IOTestDisplay.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/TOTDisplay.p1: TOTDisplay.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/TOTDisplay.p1.d 
+	@${RM} ${OBJECTDIR}/TOTDisplay.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  -D__DEBUG=1 --debugger=pickit3  --double=32 --float=32 --emi=wordwrite --opt=default,+asm,+asmfile,-speed,+space,+debug --addrqual=ignore --mode=pro -P -N255 --warn=0 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-download,+config,+clib,+plib --output=-mcof,+elf "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/TOTDisplay.p1  TOTDisplay.c 
+	@-${MV} ${OBJECTDIR}/TOTDisplay.d ${OBJECTDIR}/TOTDisplay.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/TOTDisplay.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
 else
 ${OBJECTDIR}/main.p1: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} "${OBJECTDIR}" 
@@ -161,6 +201,46 @@ ${OBJECTDIR}/init.p1: init.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=32 --float=32 --emi=wordwrite --opt=default,+asm,+asmfile,-speed,+space,+debug --addrqual=ignore --mode=pro -P -N255 --warn=0 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-download,+config,+clib,+plib --output=-mcof,+elf "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/init.p1  init.c 
 	@-${MV} ${OBJECTDIR}/init.d ${OBJECTDIR}/init.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/init.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/ADSetDisplay.p1: ADSetDisplay.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/ADSetDisplay.p1.d 
+	@${RM} ${OBJECTDIR}/ADSetDisplay.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=32 --float=32 --emi=wordwrite --opt=default,+asm,+asmfile,-speed,+space,+debug --addrqual=ignore --mode=pro -P -N255 --warn=0 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-download,+config,+clib,+plib --output=-mcof,+elf "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/ADSetDisplay.p1  ADSetDisplay.c 
+	@-${MV} ${OBJECTDIR}/ADSetDisplay.d ${OBJECTDIR}/ADSetDisplay.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/ADSetDisplay.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/tables.p1: tables.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/tables.p1.d 
+	@${RM} ${OBJECTDIR}/tables.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=32 --float=32 --emi=wordwrite --opt=default,+asm,+asmfile,-speed,+space,+debug --addrqual=ignore --mode=pro -P -N255 --warn=0 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-download,+config,+clib,+plib --output=-mcof,+elf "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/tables.p1  tables.c 
+	@-${MV} ${OBJECTDIR}/tables.d ${OBJECTDIR}/tables.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/tables.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/BUTTestDisplay.p1: BUTTestDisplay.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/BUTTestDisplay.p1.d 
+	@${RM} ${OBJECTDIR}/BUTTestDisplay.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=32 --float=32 --emi=wordwrite --opt=default,+asm,+asmfile,-speed,+space,+debug --addrqual=ignore --mode=pro -P -N255 --warn=0 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-download,+config,+clib,+plib --output=-mcof,+elf "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/BUTTestDisplay.p1  BUTTestDisplay.c 
+	@-${MV} ${OBJECTDIR}/BUTTestDisplay.d ${OBJECTDIR}/BUTTestDisplay.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/BUTTestDisplay.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/IOTestDisplay.p1: IOTestDisplay.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/IOTestDisplay.p1.d 
+	@${RM} ${OBJECTDIR}/IOTestDisplay.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=32 --float=32 --emi=wordwrite --opt=default,+asm,+asmfile,-speed,+space,+debug --addrqual=ignore --mode=pro -P -N255 --warn=0 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-download,+config,+clib,+plib --output=-mcof,+elf "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/IOTestDisplay.p1  IOTestDisplay.c 
+	@-${MV} ${OBJECTDIR}/IOTestDisplay.d ${OBJECTDIR}/IOTestDisplay.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/IOTestDisplay.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/TOTDisplay.p1: TOTDisplay.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} "${OBJECTDIR}" 
+	@${RM} ${OBJECTDIR}/TOTDisplay.p1.d 
+	@${RM} ${OBJECTDIR}/TOTDisplay.p1 
+	${MP_CC} --pass1 $(MP_EXTRA_CC_PRE) --chip=$(MP_PROCESSOR_OPTION) -Q -G  --double=32 --float=32 --emi=wordwrite --opt=default,+asm,+asmfile,-speed,+space,+debug --addrqual=ignore --mode=pro -P -N255 --warn=0 --asmlist --summary=default,-psect,-class,+mem,-hex,-file --output=default,-inhx032 --runtime=default,+clear,+init,-keep,-no_startup,-download,+config,+clib,+plib --output=-mcof,+elf "--errformat=%f:%l: error: (%n) %s" "--warnformat=%f:%l: warning: (%n) %s" "--msgformat=%f:%l: advisory: (%n) %s"    -o${OBJECTDIR}/TOTDisplay.p1  TOTDisplay.c 
+	@-${MV} ${OBJECTDIR}/TOTDisplay.d ${OBJECTDIR}/TOTDisplay.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/TOTDisplay.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
 endif
 

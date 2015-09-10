@@ -39,7 +39,7 @@ void InitTimers()
 
 void InitButtons()
 {
-
+  PORTB = 0;
   TRISB   = 0b11110001;  // RB4, RB5, RB6, RB7 inputs
   PORTE = 0;
   LATE = 0;
@@ -82,34 +82,4 @@ void SetADChanges(uint8_t new_value)
   {
     NEW_AD_CHANGES[i] = new_value;
   }
-}
-
-int   mysprintf(char* buffer, const char* format, ...)
-{ va_list ap; int i = 0; char buf[20]; int width = 0;
-/*  va_start(ap, format);
-  while(format[i])
-  {
-    if (format[i] == '%')
-    {
-      switch (format[++i])
-      {
-        case '\0':
-          goto exit;
-        break;
-        case 'i':
-          itoa(buf, va_arg(ap, int*), 10);
-        case 'f':
-          ftoa(buf, va_arg(ap, float*));
-          strcat(format[i], buf);
-      }
-    } else
-    {
-      buffer[i] = format[i];
-    }
-    i++;
-  }
-  exit:
-  buffer[i] = '\0';
-  va_end(ap);*/
-return 0;
 }

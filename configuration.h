@@ -15,6 +15,9 @@ extern "C" {
 #include <xc.h>
 #include <stdint.h>
 
+#define TYPE_LETTER "PD"
+#define TYPE_NUMBER 786
+
   /* Version constants. */
 #define VER_H 2
 #define VER_L 5
@@ -139,6 +142,20 @@ extern "C" {
 #define TMR5HVAL   0x0B
 
 #define VERSION_DELAY   100
+
+#define MIN00MA 0000
+#define VAL00MA 100 
+#define MAX00MA 582
+#define MIN04MA 5000  // 5707
+#define VAL04MA 5824
+#define MAX04MA 6000  // 5940
+#define MIN20MA 28000 // 28536
+#define VAL20MA 29119
+#define MAX20MA 30000 // 29701
+#define MIN22MA 31390
+#define VAL22MA 32031
+#define MAX22MA 32671
+#define ABSMAX  32767
 
 typedef union  {
 struct s_eeprom_data {

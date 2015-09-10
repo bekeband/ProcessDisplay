@@ -11,15 +11,19 @@
       <itemPath>EEPROM_D.h</itemPath>
       <itemPath>crc.h</itemPath>
       <itemPath>init.h</itemPath>
+      <itemPath>ADSetDisplay.h</itemPath>
+      <itemPath>tables.h</itemPath>
+      <itemPath>BUTTestDisplay.h</itemPath>
+      <itemPath>IOTestDisplay.h</itemPath>
+      <itemPath>TOTDisplay.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
     </logicalFolder>
     <logicalFolder name="f1" displayName="MyDoc" projectFiles="true">
-      <itemPath>mydoc/General Description</itemPath>
-      <itemPath>mydoc/User Guide</itemPath>
-      <itemPath>../../Documentation/User Guide.odt</itemPath>
+      <itemPath>../../Documentation/User Guide PD 786 Process Indicator Display EN.odt</itemPath>
+      <itemPath>../../Documentation/User Guide PD 786 Process Indicator Display HU.odt</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -29,6 +33,11 @@
       <itemPath>LCDDriver.c</itemPath>
       <itemPath>crc.c</itemPath>
       <itemPath>init.c</itemPath>
+      <itemPath>ADSetDisplay.c</itemPath>
+      <itemPath>tables.c</itemPath>
+      <itemPath>BUTTestDisplay.c</itemPath>
+      <itemPath>IOTestDisplay.c</itemPath>
+      <itemPath>TOTDisplay.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

@@ -28,7 +28,6 @@ void InitButtons();
 void InitAD();
 void InitADValues();
 void SetADChanges(uint8_t new_value);
-int   mysprintf(char *, const char *, ...);
 
 #ifdef	__cplusplus
 }
