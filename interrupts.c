@@ -109,7 +109,7 @@ void interrupt isr(void)
 
 /* ------------------------------- BUTTON ENTER --------------------------------*/
 
-  if  (!BUT_ENT)
+/*  if  (!BUT_ENT)
   {
     if (BUTTON_COUNTER[2]++ >= BUTTON_DELAY_2)
     {
@@ -125,7 +125,7 @@ void interrupt isr(void)
     }
     INHIBIT[2] = 0;
     BUTTON_COUNTER[2] = 0;
-  }
+  }*/
 
   /* ------------------------------- BUTTON ESCAPE --------------------------------*/
 
