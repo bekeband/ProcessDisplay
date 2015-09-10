@@ -107,46 +107,6 @@ void interrupt isr(void)
     BUTTON_COUNTER[1] = 0;
   }
 
-/* ------------------------------- BUTTON ENTER --------------------------------*/
-
-/*  if  (!BUT_ENT)
-  {
-    if (BUTTON_COUNTER[2]++ >= BUTTON_DELAY_2)
-    {
-      CURRENT_MESSAGE = BUT_ENT_LONG;
-      INHIBIT[2] = 1;
-      BUTTON_COUNTER[2] = 0;
-    };
-  } else
-  {
-    if ((BUTTON_COUNTER[2] >= BUTTON_DELAY) && (!INHIBIT[2]))
-    {
-      CURRENT_MESSAGE = BUT_ENT_MESSAGE;
-    }
-    INHIBIT[2] = 0;
-    BUTTON_COUNTER[2] = 0;
-  }*/
-
-  /* ------------------------------- BUTTON ESCAPE --------------------------------*/
-
-  if  (!BUT_ESC)
-  {
-    if (BUTTON_COUNTER[3]++ >= BUTTON_DELAY_2)
-    {
-      CURRENT_MESSAGE = BUT_ESC_LONG;
-      INHIBIT[3] = 1;
-      BUTTON_COUNTER[3] = 0;
-    };
-  } else
-  {
-    if ((BUTTON_COUNTER[3] >= BUTTON_DELAY) && (!INHIBIT[3]))
-    {
-      CURRENT_MESSAGE = BUT_ESC_MESSAGE;
-    }
-    INHIBIT[3] = 0;
-    BUTTON_COUNTER[3] = 0;
-  }
-
 }
 
 if (PIR1bits.ADIF)
