@@ -19,6 +19,7 @@ volatile int NEW_SUMMA_COUNT = 0;
 int AD_RESTART_DIS = 0;
 
 volatile int TIMER_COUNTER_VALUE;
+volatile int HOUR_FLAG = 0;
 
 /* The one interrupt routine, whitch handle all interrupts. */
 
@@ -42,9 +43,15 @@ volatile int CURRENT_MESSAGE = 0;
 volatile int BUTTON_COUNTER[BUT_NUMBER] = {0,0,0,0};
 volatile int INHIBIT[BUT_NUMBER] = {0,0,0,0};
 int SEC_TIMER = 0;
+int HOUR_TIMER = 0;
 
 void interrupt isr(void)
 {
+/*  if (INTCONbits.INT0IF)
+  {
+    LCD_LIGHT = 1;
+    INTCONbits.INT0IF = 0;
+  }*/
   if (INTCONbits.RBIF)  // RB port changed interrupt ?
   {
     INTCONbits.RBIF = 0;
@@ -60,11 +67,17 @@ void interrupt isr(void)
     TMR5L   = TMR5LVAL;
     TMR5H   = TMR5HVAL;
     PIR5bits.TMR5IF = 0;
+    /* One sec timer counter.  */
     if ((SEC_TIMER++) == 40)
     {
       NEW_SUMMA_COUNT = 1;
-//    LED1 = !LED1;
+      NEW_AD_CHANGES[0] = 1;
       SEC_TIMER = 0;
+      if (HOUR_TIMER++ == 3600)
+      {
+        HOUR_TIMER = 0;
+        HOUR_FLAG = 1;
+      }
     }
     TIMER_COUNTER_VALUE++;
   /* Button inputs and debounce programs. */
@@ -121,16 +134,14 @@ if (PIR1bits.ADIF)
       if (++AD_COUNTER == MAX_AD_COUNT)
       {
         NEW_AD_DATAS[AD_COUNTER] = 1;
-//        NEW_AD_DATA = 1;
         AD_COUNTER = 0;
         /* if the new A/D datas and changes as well. */
         if (OLD_AD_VALUES[AD_COUNTER] != AD_DATA[AD_COUNTER])
         {
-          NEW_AD_CHANGES[AD_COUNTER] = 1;
+//          NEW_AD_CHANGES[AD_COUNTER] = 1;
         }
       };
       /* TODO majd kivenni !*/
-//      SetChanADC(0b11111);
       SetChanADC(AD_COUNTER);
     }
     AD_AVERAGE_COUNTER++;
@@ -140,7 +151,6 @@ if (PIR1bits.ADIF)
     {
       ADCON0bits.GO = 1;  /* Restart A/D conversion. */
     }
-}
-//  if (PIR1bits.TMR1IF)
+  }
 };
 

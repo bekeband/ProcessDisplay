@@ -127,12 +127,8 @@ extern "C" {
 #define   BUT_DN    PORTBbits.RB4
 #define   BUT_DN_MESSAGE    0x235
 #define   BUT_DN_LONG       0x564
-#define   BUT_ENT   PORTEbits.RE0
-#define   BUT_ENT_MESSAGE    0x236
-#define   BUT_ENT_LONG       0x998
-#define   BUT_ESC   PORTEbits.RE2
-#define   BUT_ESC_MESSAGE    0x238
-#define   BUT_ESC_LONG       0x978
+/* Low power input. */
+#define   LOWPOWER_INPUT   PORTBbits.RB0
 
 #define BUTTON_DELAY    4
 #define BUTTON_DELAY_2  30
@@ -146,16 +142,20 @@ extern "C" {
 #define MIN00MA 0000
 #define VAL00MA 100 
 #define MAX00MA 582
-#define MIN04MA 5000  // 5707
-#define VAL04MA 5824
-#define MAX04MA 6000  // 5940
-#define MIN20MA 28000 // 28536
-#define VAL20MA 29119
-#define MAX20MA 30000 // 29701
-#define MIN22MA 31390
-#define VAL22MA 32031
-#define MAX22MA 32671
+#define MIN3_6MA  4770
+#define MIN04MA 5200  // 5707
+#define VAL04MA 5309
+#define MAX04MA 5450  // 5940
+#define MIN20MA 26000 // 28536
+#define VAL20MA 26660
+#define MAX20MA 27500 // 29701
+#define MIN22MA 28700
+#define VAL22MA 29335 //
+#define MAX22MA 30000
 #define ABSMAX  32767
+
+#define MIN_SUMMAS_VALUE  0.0
+#define MAX_SUMMAS_VALUE  99999999.0
 
 typedef union  {
 struct s_eeprom_data {
@@ -174,6 +174,15 @@ typedef struct {
   float sum_2;
   uint8_t sum_dim;
 } s_summa_datas;
+
+typedef enum
+{
+  EXTREME_LOW = 0,
+  FAILSAFE_LOW = 1,
+  NORMAL = 2,
+  FAILSAFE_HIGH = 3,
+  EXTREME_HIGH = 4
+} AD_VAL_ERROR;
 
 typedef char s_dim_text[7];
 

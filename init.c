@@ -50,7 +50,7 @@ void InitButtons()
 void InitAD()
 {
   VREFCON0bits.FVREN = 1;
-  VREFCON0bits.FVRS = 0b01;
+  VREFCON0bits.FVRS = 0b10;
   while (!VREFCON0bits.FVRST);
 
   ADCON2bits.ADFM   = 1;      // A/D Conversion Result Format Select bit 1 = Right justified 0 = Left justified
@@ -69,8 +69,8 @@ void InitADValues()
   {
     CHAN_FEATS[i].eeprom_datas.input_dim = 0;     // input dim %
     CHAN_FEATS[i].eeprom_datas.input_type = 0;    // input type 4-20 mA
-    CHAN_FEATS[i].eeprom_datas.min_eng = 0;       //6547;    // MIN. input integer value
-    CHAN_FEATS[i].eeprom_datas.max_eng = 26660;   // MAX. input integer value
+    CHAN_FEATS[i].eeprom_datas.min_eng = VAL04MA;       //6547;    // MIN. input integer value
+    CHAN_FEATS[i].eeprom_datas.max_eng = VAL20MA;   // MAX. input integer value
     CHAN_FEATS[i].eeprom_datas.min_val = 0;       //
     CHAN_FEATS[i].eeprom_datas.max_val = 11.11;     //
   }

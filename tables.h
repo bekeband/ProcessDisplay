@@ -14,6 +14,7 @@ extern "C" {
 
 extern const char* format_table[];
 extern const char* dim_table[];
+extern const char* value_table[];
 
 #ifdef	__cplusplus
 }

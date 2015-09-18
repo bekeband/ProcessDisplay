@@ -32,9 +32,14 @@
 u_chan_datas CHAN_FEATS[MAX_AD_COUNT];
 s_summa_datas CHAN_SUMMAS[MAX_AD_COUNT];
 
+AD_VAL_ERROR AD_VAL_ERRORS[MAX_AD_COUNT];
+
 DRAW_STATES DRAW_STATE = DRAW_INIT;
 DISPLAY_STATES CURRENT_DISPLAY = MAIN_DISPLAY;
 
+uint16_t CHECKED_EEPROM_SIZE = sizeof(CHAN_FEATS);
+
+int LOW_POWER_FLAG = 0;
 
 int WriteStandardDatasToEEPROM()
 {
@@ -43,11 +48,54 @@ int WriteStandardDatasToEEPROM()
   return 0;
 }
 
+void CheckChanSumma(int channel)
+{   
+  if (CHAN_SUMMAS[channel].sum_1 < MIN_SUMMAS_VALUE)
+    CHAN_SUMMAS[channel].sum_1 = MIN_SUMMAS_VALUE;
+  else if (CHAN_SUMMAS[channel].sum_1 > MAX_SUMMAS_VALUE)
+    CHAN_SUMMAS[channel].sum_1 = MIN_SUMMAS_VALUE;
+}
+void CheckChanSummas()
+{ int i;
+  for (i = 0; i < MAX_AD_COUNT; i++)
+  {
+    CheckChanSumma(i);
+  }
+}
+
 float GetADValue(int num)
-{
-  float tgns = CHAN_FEATS[num].eeprom_datas.max_val / (CHAN_FEATS[0].eeprom_datas.max_eng - CHAN_FEATS[0].eeprom_datas.min_eng);
-  int rval = ((AD_DATA[num] - CHAN_FEATS[num].eeprom_datas.min_eng));
-  return (rval * tgns) + CHAN_FEATS[num].eeprom_datas.min_val ;
+{ int16_t ADVAL; float tgns, rval;
+  di();
+  ADVAL = AD_DATA[num];
+  ei();
+  if (ADVAL < MIN3_6MA)
+  {
+    AD_VAL_ERRORS[num] = EXTREME_LOW;
+    rval = 0.0;
+  } else
+    if (ADVAL < CHAN_FEATS[0].eeprom_datas.min_eng)
+    {
+      AD_VAL_ERRORS[num] = FAILSAFE_LOW;
+      rval = 0.0;
+    } else 
+      if (ADVAL < MAX20MA) // (CHAN_FEATS[0].eeprom_datas.max_eng))
+      {
+      AD_VAL_ERRORS[num] = NORMAL;
+      tgns = CHAN_FEATS[num].eeprom_datas.max_val / (CHAN_FEATS[0].eeprom_datas.max_eng - CHAN_FEATS[0].eeprom_datas.min_eng);
+      rval = (((ADVAL - CHAN_FEATS[num].eeprom_datas.min_eng) * tgns) + CHAN_FEATS[num].eeprom_datas.min_val);
+      } else
+        if (ADVAL < MAX22MA)
+        {
+          AD_VAL_ERRORS[num] = FAILSAFE_HIGH;
+          rval = 0.0;
+        }
+        else
+        {
+          AD_VAL_ERRORS[num] = EXTREME_HIGH;
+          rval = 0.0;
+        }
+
+  return rval;
 }
 
 void DelayDisplayValue(int delay_value)
@@ -67,35 +115,47 @@ void PrintMeasValue(int ramaddr, int pos, int channel)
   if (NEW_AD_CHANGES[channel])
   {
     LCDSendCmd(ramaddr + pos);
-    sprintf(buf, format_table[0], GetADValue(channel), dim_table[CHAN_FEATS[channel].eeprom_datas.input_dim]);
+
+//    sprintf(buf, format_table[0], GetADValue(channel), dim_table[CHAN_FEATS[channel].eeprom_datas.input_dim]);
+    sprintf(buf, value_table[AD_VAL_ERRORS[channel]], GetADValue(channel), dim_table[CHAN_FEATS[channel].eeprom_datas.input_dim]);
+
     LCDSendStr(buf);
     NEW_AD_CHANGES[channel] = 0;
   }
 }
 
 void MainDisplay()
-{ char buf[20];
+{ char buf[20]; float new_value;
   switch (DRAW_STATE)
   {
     case DRAW_INIT:
       LCDSendCmd(CLR_DISP);
 
       DRAW_STATE = DRAW_RUN;
-      SetADChanges(1);
+//      SetADChanges(1);
       break;
 
     case DRAW_RUN:
 
      if (NEW_SUMMA_COUNT)
       {
-        CHAN_SUMMAS[0].sum_1 += GetADValue(0);
-        LCDSendCmd(DD_RAM_ADDR2);
-        sprintf(buf, "%10.0f  %s", CHAN_SUMMAS[0].sum_1, dim_table[CHAN_SUMMAS[0].sum_dim]);
-        LCDSendStr(buf);
-        NEW_SUMMA_COUNT = 0;
+       new_value = GetADValue(0);
+       if (AD_VAL_ERRORS[0] == NORMAL)
+       {
+         if (new_value > 0)
+         {
+            CHAN_SUMMAS[0].sum_1 += new_value;
+         }
+
+       };
+      CheckChanSumma(0);
+      LCDSendCmd(DD_RAM_ADDR2);
+      sprintf(buf, "%10.0f  %s", CHAN_SUMMAS[0].sum_1, dim_table[CHAN_SUMMAS[0].sum_dim]);
+      LCDSendStr(buf);
+      NEW_SUMMA_COUNT = 0;
      }
 
-     PrintMeasValue(DD_RAM_ADDR, 2, 0);
+     PrintMeasValue(DD_RAM_ADDR, 0, 0);
 
       if (CURRENT_MESSAGE == BUT_DN_LONG)
       {
@@ -122,14 +182,9 @@ void ClearSummas(int channel)
 void ClearAllSummas()
 { int i; for (i = 0; i < MAX_AD_COUNT; i++) { ClearSummas(i); } }
 
-void SetBounds()
-{
-
-}
-
 int WelcomeScreen()
 { char buf[20]; int u = 2;
-  uint16_t CHECKED_EEPROM_SIZE = sizeof(CHAN_FEATS);
+  
   uint16_t CRC_ADDRESS = _EEPROMSIZE - 2; // Last word the CRC checksum.
   uint16_t CALCCHECKSUM;
   uint16_t STOREDCHECKSUM;
@@ -160,6 +215,7 @@ int WelcomeScreen()
     if (CALCCHECKSUM == STOREDCHECKSUM)
       {
         ReadDataEEP((char*)&CHAN_SUMMAS, CHECKED_EEPROM_SIZE, sizeof(CHAN_SUMMAS));
+        CheckChanSummas();
         sprintf(buf, "CRC = %04X OK!", CALCCHECKSUM);
       } else
       {
@@ -228,6 +284,24 @@ int main(int, char** ) {
         }
         break;
     }
+
+    /* Check lowpower input. */
+
+    if (HOUR_FLAG)
+    {
+      HOUR_FLAG = 0;
+      WriteDataEEP((char*)&CHAN_SUMMAS, CHECKED_EEPROM_SIZE, sizeof(CHAN_SUMMAS));
+    }
+
+    if ((!LOWPOWER_INPUT) && (!LOW_POWER_FLAG))
+    {
+/*      di();
+      LOW_POWER_FLAG = 1;
+      LCD_LIGHT = 0;
+      LCDSendCmd(DISP_OFF);
+      WriteDataEEP((char*)&CHAN_SUMMAS, CHECKED_EEPROM_SIZE, sizeof(CHAN_SUMMAS));*/
+    }
+
   CURRENT_MESSAGE = 0;
   }
   return (EXIT_SUCCESS);

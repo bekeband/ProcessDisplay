@@ -31,12 +31,6 @@ int BUTTestDisplay()
           case BUT_DN_MESSAGE:
             strcpy(buf, "BUT_DN");
             break;
-          case BUT_ENT_MESSAGE:
-            strcpy(buf, "BUT_ENT");
-            break;
-          case BUT_ESC_MESSAGE:
-            strcpy(buf, "BUT_ESC");
-            break;
         };
       CURRENT_MESSAGE = 0;
       LCDSendStr(buf);

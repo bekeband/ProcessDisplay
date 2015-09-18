@@ -28,6 +28,7 @@ extern volatile uint8_t NEW_AD_DATAS[MAX_AD_COUNT];
 extern volatile uint8_t NEW_AD_CHANGES[MAX_AD_COUNT];
 extern volatile int CURRENT_MESSAGE;
 extern volatile int TIMER_COUNTER_VALUE;
+extern volatile int HOUR_FLAG;
 
 
 /* MESSAGE_FUNC(int, int) */
