@@ -8,7 +8,7 @@
 #include "globalextern.h"
 
 int TOTDisplay(int number)
-{ char buf[20];
+{ char buf[20]; int retval = 0;
   switch (DRAW_STATE)
   {
     /* Totalizer reset display. */
@@ -31,6 +31,7 @@ int TOTDisplay(int number)
           CHAN_SUMMAS[number].sum_1 = 0;
           CURRENT_MESSAGE = 0;
           DRAW_STATE = DRAW_EXIT;
+          retval = 1;
         };
       if (CURRENT_MESSAGE == BUT_UP_MESSAGE)
         { /* Exit the setting program. */
@@ -44,5 +45,6 @@ int TOTDisplay(int number)
         DRAW_STATE = DRAW_INIT;
       break;
   };
+  return retval;
 }
 

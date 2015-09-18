@@ -39,8 +39,6 @@ DISPLAY_STATES CURRENT_DISPLAY = MAIN_DISPLAY;
 
 uint16_t CHECKED_EEPROM_SIZE = sizeof(CHAN_FEATS);
 
-int LOW_POWER_FLAG = 0;
-
 int WriteStandardDatasToEEPROM()
 {
   InitADValues();
@@ -183,7 +181,7 @@ void ClearAllSummas()
 { int i; for (i = 0; i < MAX_AD_COUNT; i++) { ClearSummas(i); } }
 
 int WelcomeScreen()
-{ char buf[20]; int u = 2;
+{ char buf[20];
   
   uint16_t CRC_ADDRESS = _EEPROMSIZE - 2; // Last word the CRC checksum.
   uint16_t CALCCHECKSUM;
@@ -280,7 +278,7 @@ int main(int, char** ) {
       case TOTALIZER_DISPLAY:
         if (TOTDisplay(0))
         {
-          
+          WriteDataEEP((char*)&CHAN_SUMMAS, CHECKED_EEPROM_SIZE, sizeof(CHAN_SUMMAS));
         }
         break;
     }
@@ -291,15 +289,6 @@ int main(int, char** ) {
     {
       HOUR_FLAG = 0;
       WriteDataEEP((char*)&CHAN_SUMMAS, CHECKED_EEPROM_SIZE, sizeof(CHAN_SUMMAS));
-    }
-
-    if ((!LOWPOWER_INPUT) && (!LOW_POWER_FLAG))
-    {
-/*      di();
-      LOW_POWER_FLAG = 1;
-      LCD_LIGHT = 0;
-      LCDSendCmd(DISP_OFF);
-      WriteDataEEP((char*)&CHAN_SUMMAS, CHECKED_EEPROM_SIZE, sizeof(CHAN_SUMMAS));*/
     }
 
   CURRENT_MESSAGE = 0;
