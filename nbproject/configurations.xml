@@ -22,8 +22,8 @@
                    projectFiles="true">
     </logicalFolder>
     <logicalFolder name="f1" displayName="MyDoc" projectFiles="true">
-      <itemPath>../../Documentation/User Guide PD 786 Process Indicator Display EN.odt</itemPath>
-      <itemPath>../../Documentation/User Guide PD 786 Process Indicator Display HU.odt</itemPath>
+      <itemPath>mydoc/User Guide PD 786 Process Indicator Display EN.odt</itemPath>
+      <itemPath>mydoc/User Guide PD 786 Process Indicator Display HU.odt</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -155,6 +155,7 @@
         <property key="ToolFirmwareFilePath"
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
