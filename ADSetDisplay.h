@@ -24,6 +24,7 @@ extern DRAW_STATES DRAW_STATE;
 
 int ADSetDisplay(int channel);
 void PrintButtonLabels(const char* BUP, const char* BDN);
+void PrintUPButton(const char* BUP);
 
 #ifdef	__cplusplus
 }

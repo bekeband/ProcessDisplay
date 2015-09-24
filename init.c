@@ -71,8 +71,8 @@ void InitADValues()
     CHAN_FEATS[i].eeprom_datas.input_type = 0;    // input type 4-20 mA
     CHAN_FEATS[i].eeprom_datas.min_eng = VAL04MA;       //6547;    // MIN. input integer value
     CHAN_FEATS[i].eeprom_datas.max_eng = VAL20MA;   // MAX. input integer value
-    CHAN_FEATS[i].eeprom_datas.min_val = 0;       //
-    CHAN_FEATS[i].eeprom_datas.max_val = 11.11;     //
+    CHAN_FEATS[i].eeprom_datas.min_val = RANGE_MIN;       //
+    CHAN_FEATS[i].eeprom_datas.max_val = RANGE_MAX;     //
   }
 }
 

@@ -8,7 +8,6 @@
       <itemPath>ADDatas.h</itemPath>
       <itemPath>LCDDriver.h</itemPath>
       <itemPath>globalextern.h</itemPath>
-      <itemPath>EEPROM_D.h</itemPath>
       <itemPath>crc.h</itemPath>
       <itemPath>init.h</itemPath>
       <itemPath>ADSetDisplay.h</itemPath>
@@ -16,6 +15,7 @@
       <itemPath>BUTTestDisplay.h</itemPath>
       <itemPath>IOTestDisplay.h</itemPath>
       <itemPath>TOTDisplay.h</itemPath>
+      <itemPath>RangeSetDisplay.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -38,6 +38,7 @@
       <itemPath>BUTTestDisplay.c</itemPath>
       <itemPath>IOTestDisplay.c</itemPath>
       <itemPath>TOTDisplay.c</itemPath>
+      <itemPath>RangeSetDisplay.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

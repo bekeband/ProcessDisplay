@@ -157,6 +157,9 @@ extern "C" {
 #define MIN_SUMMAS_VALUE  0.0
 #define MAX_SUMMAS_VALUE  99999999.0
 
+#define RANGE_MIN 0
+#define RANGE_MAX 3.6
+
 typedef union  {
 struct s_eeprom_data {
   uint8_t input_type; // 0 = 4 - 20 mA, 1 = 0- 20 mA

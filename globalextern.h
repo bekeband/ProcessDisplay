@@ -57,6 +57,7 @@ typedef enum
   MAIN_DISPLAY,
   IOTEST_DISPLAY,
   ADSET_DISPLAY,
+  RANGESET_DISPLAY,
   TOTALIZER_DISPLAY
 } DISPLAY_STATES;
 
@@ -70,6 +71,7 @@ typedef enum
   HIGH_SET,
   AD_SET_EXIT
 }ADSET_STATES;
+
 
 #ifdef	__cplusplus
 }

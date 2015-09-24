@@ -18,6 +18,7 @@
 #include "crc.h"
 #include "ADSetDisplay.h"
 #include "TOTDisplay.h"
+#include "RangeSetDisplay.h"
 #include "tables.h"
 
 /* EEPROM initialize. If define EEPROM_INIT then initialize EEPROM contents with
@@ -157,7 +158,7 @@ void MainDisplay()
 
       if (CURRENT_MESSAGE == BUT_DN_LONG)
       {
-        CURRENT_DISPLAY = ADSET_DISPLAY;
+        CURRENT_DISPLAY = RANGESET_DISPLAY;
         CURRENT_MESSAGE = 0;
         DRAW_STATE = DRAW_INIT;
       }
@@ -269,10 +270,11 @@ int main(int, char** ) {
       case MAIN_DISPLAY:
         MainDisplay();
       break;
-      case ADSET_DISPLAY:
-        if (ADSetDisplay(0))
+      case RANGESET_DISPLAY:
+        if (RangeSetDisplay(0))
         {
-          WriteDataEEP((unsigned char*) &CHAN_FEATS, 0, sizeof(CHAN_FEATS));
+
+//          WriteDataEEP((unsigned char*) &CHAN_FEATS, 0, sizeof(CHAN_FEATS));
         }
       break;
       case TOTALIZER_DISPLAY:
