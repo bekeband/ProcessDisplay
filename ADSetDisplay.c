@@ -15,7 +15,7 @@ int PrintRawValue(int ramaddr, int pos, int channel)
   {
     LCDSendCmd(ramaddr + pos);
     last_ad_data = AD_DATA[channel];
-    sprintf(buf, format_table[1], last_ad_data);
+    sprintf(buf, format_table[channel], last_ad_data);
     LCDSendStr(buf);
     NEW_AD_CHANGES[0] = 0;
     return 1;
@@ -105,13 +105,13 @@ int ADSetDisplay(int channel)
           is_value_ok = 0;
         }
       }
-      if ((CURRENT_MESSAGE == BUT_DN_MESSAGE) && (is_value_ok))
+      if ((CURRENT_MESSAGE == BUT_DN_UP) && (is_value_ok))
         {
           CURRENT_MESSAGE = 0;
           new_minval = last_ad_data;
           ADSET_STATE = HIGH_INIT;
         };
-      if (CURRENT_MESSAGE == BUT_UP_MESSAGE)
+      if (CURRENT_MESSAGE == BUT_UP_UP)
         { /* Exit the setting program. */
           CURRENT_MESSAGE = 0;
           ADSET_STATE = AD_SET_EXIT;
@@ -143,12 +143,12 @@ int ADSetDisplay(int channel)
         }
       }
       
-    if ((CURRENT_MESSAGE == BUT_DN_MESSAGE) && (is_value_ok))
+    if ((CURRENT_MESSAGE == BUT_DN_UP) && (is_value_ok))
       {
         CURRENT_MESSAGE = 0;
         ADSET_STATE = HIGH_SET;
       };
-    if (CURRENT_MESSAGE == BUT_UP_MESSAGE)
+    if (CURRENT_MESSAGE == BUT_UP_UP)
       { /* Exit the setting program. */
         CURRENT_MESSAGE = 0;
         ADSET_STATE = AD_SET_EXIT;
@@ -164,7 +164,7 @@ int ADSetDisplay(int channel)
       LCDSendStr(buf);
       PrintButtonLabels("ESC", "OK ");
 
-      if (CURRENT_MESSAGE == BUT_DN_MESSAGE)
+      if (CURRENT_MESSAGE == BUT_DN_UP)
         {
           CHAN_FEATS[channel].eeprom_datas.min_eng = new_minval;
           CHAN_FEATS[channel].eeprom_datas.max_eng = new_maxval;
@@ -173,7 +173,7 @@ int ADSetDisplay(int channel)
           retval = 1;
         };
 
-      if (CURRENT_MESSAGE == BUT_UP_MESSAGE)
+      if (CURRENT_MESSAGE == BUT_UP_UP)
         {
           CURRENT_MESSAGE = 0;
           ADSET_STATE = AD_SET_EXIT;

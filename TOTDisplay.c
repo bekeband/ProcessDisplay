@@ -26,14 +26,14 @@ int TOTDisplay(int number)
       break;
 
     case DRAW_RUN:
-      if (CURRENT_MESSAGE == BUT_DN_MESSAGE)
+      if (CURRENT_MESSAGE == BUT_DN_UP)
         {
           CHAN_SUMMAS[number].sum_1 = 0;
           CURRENT_MESSAGE = 0;
           DRAW_STATE = DRAW_EXIT;
           retval = 1;
         };
-      if (CURRENT_MESSAGE == BUT_UP_MESSAGE)
+      if (CURRENT_MESSAGE == BUT_UP_UP)
         { /* Exit the setting program. */
           CURRENT_MESSAGE = 0;
           DRAW_STATE = DRAW_EXIT;

@@ -16,6 +16,12 @@ volatile int AD_AVERAGE_FACTOR = DEFAULT_AD_AVERAGE_FACTOR;
 volatile int AD_AVERAGE_COUNTER;
 volatile int NEW_SUMMA_COUNT = 0;
 
+volatile int CURRENT_MESSAGE = 0;
+static volatile int BUTTON_COUNTER[BUT_NUMBER] = {0,0,0,0};
+static BUTTONS_T BUTTONS_OLD_STATE;
+static BUTTONS_T BUTTONS_STATE;
+static BUTTONS_T reading;
+
 int AD_RESTART_DIS = 0;
 
 volatile int TIMER_COUNTER_VALUE;
@@ -39,19 +45,24 @@ void ResetADBuffers()
   ConvertADC();
 }
 
-volatile int CURRENT_MESSAGE = 0;
-volatile int BUTTON_COUNTER[BUT_NUMBER] = {0,0,0,0};
-volatile int INHIBIT[BUT_NUMBER] = {0,0,0,0};
 int SEC_TIMER = 0;
+int SEC10TH_TIMER = 0;
+int TZ = 0;
 int HOUR_TIMER = 0;
 
 void interrupt isr(void)
 {
-/*  if (INTCONbits.INT0IF)
+  if (INTCONbits.TMR0IF)
   {
-    LCD_LIGHT = 1;
-    INTCONbits.INT0IF = 0;
-  }*/
+    INTCONbits.TMR0IF = 0;
+    TMR0L = TMR0LVAL;
+    TMR0H = TMR0HVAL;
+/*    if (TZ++ == 1000)
+    {
+      LED1 = !LED1;
+      TZ = 0;
+    }*/
+  }
   if (INTCONbits.RBIF)  // RB port changed interrupt ?
   {
     INTCONbits.RBIF = 0;
@@ -78,48 +89,125 @@ void interrupt isr(void)
         HOUR_TIMER = 0;
         HOUR_FLAG = 1;
       }
+      /* ------------------------------------------------ */
+
     }
     TIMER_COUNTER_VALUE++;
   /* Button inputs and debounce programs. */
 /* ------------------------------- BUTTON UP --------------------------------*/
-  if  (!BUT_UP)
+
+    reading.UP = !BUT_UP;
+    if (reading.UP != BUTTONS_OLD_STATE.UP)
+    {
+      if (reading.UP)
+      {
+        CURRENT_MESSAGE = BUT_UP_DOWN;
+      } else
+      {
+        CURRENT_MESSAGE = BUT_UP_UP;
+      }
+      BUTTONS_OLD_STATE.UP = reading.UP;
+    }
+
+/*    if (BUTTON_COUNTER[0]++ >= BUTTON_DELAY)
+    {
+      if (reading.UP != BUTTONS_OLD_STATE.UP)
+      {
+        BUTTONS_STATE.UP = reading.UP;
+        if (!BUTTONS_STATE.UP)
+        {
+          CURRENT_MESSAGE = BUT_UP_DOWN;
+        }
+      }
+    }*/
+
+
+    reading.DN = !BUT_DN;
+    if (reading.DN != BUTTONS_OLD_STATE.DN)
+    {
+      if (reading.DN)
+      {
+        CURRENT_MESSAGE = BUT_DN_DOWN;        
+      } else
+      {
+        CURRENT_MESSAGE = BUT_DN_UP;                
+      }
+      BUTTONS_OLD_STATE.DN = reading.DN;
+    }
+
+/*    if (BUTTON_COUNTER[1]++ >= BUTTON_DELAY)
+    {
+      if (reading.DN != BUTTONS_OLD_STATE.DN)
+      {
+        BUTTONS_STATE.DN = reading.DN;
+        if (!BUTTONS_STATE.UP)
+        {
+          CURRENT_MESSAGE = BUT_DN_DOWN;
+        }
+      }
+    }*/
+
+
+
+/*
+  if  (!BUT_UP) /* button up pressed ?
   {
-    if (BUTTON_COUNTER[0]++ >= BUTTON_DELAY_2)
+    if (!BUTTONS_OLD_STATE.UP)
+    { /* rising edge 
+      BUTTONS_OLD_STATE.UP = 1;
+      BUTTON_COUNTER[0] = 0;
+    }
+    BUTTON_COUNTER[0]++;
+    if (BUTTON_COUNTER[0] >= BUTTON_DELAY_2)
     {
       CURRENT_MESSAGE = BUT_UP_LONG;
-      INHIBIT[0] = 1;
-      BUTTON_COUNTER[0] = 0;
-    };
-  } else
-  {
-    if ((BUTTON_COUNTER[0] >= BUTTON_DELAY) && (!INHIBIT[0]))
-    {
-      CURRENT_MESSAGE = BUT_UP_MESSAGE;
+      BUTTONS_OLD_STATE.UP = 0;
+//      INHIBIT[0] = 1;
     }
-    INHIBIT[0] = 0;
-    BUTTON_COUNTER[0] = 0;
+
+  } else  /* button up released. 
+  {
+    if (BUTTONS_OLD_STATE.UP)
+    {
+      BUTTONS_OLD_STATE.UP = 0;
+      if (BUTTON_COUNTER[0] >= BUTTON_DELAY)
+      {
+        CURRENT_MESSAGE = BUT_UP_MESSAGE;
+      }
+  };
   }
 
-/* ------------------------------- BUTTON DOWN --------------------------------*/
+/* ------------------------------- BUTTON DOWN --------------------------------
 
-  if  (!BUT_DN)
+/* ------------------------------- BUTTON UP --------------------------------
+
+  if  (!BUT_DN) /* button up pressed ?
   {
-    if (BUTTON_COUNTER[1]++ >= BUTTON_DELAY_2)
+    if (!BUTTONS_OLD_STATE.DN)
+    { /* rising edge 
+      BUTTONS_OLD_STATE.DN = 1;
+      BUTTON_COUNTER[1] = 0;
+    }
+    BUTTON_COUNTER[1]++;
+    if (BUTTON_COUNTER[1] >= BUTTON_DELAY_2)
     {
       CURRENT_MESSAGE = BUT_DN_LONG;
-      INHIBIT[1] = 1;
-      BUTTON_COUNTER[1] = 0;
-    };
-  } else
-  {
-    if ((BUTTON_COUNTER[1] >= BUTTON_DELAY) && (!INHIBIT[1]))
-    {
-      CURRENT_MESSAGE = BUT_DN_MESSAGE;
+      BUTTONS_OLD_STATE.DN = 0;
+//      INHIBIT[0] = 1;
     }
-    INHIBIT[1] = 0;
-    BUTTON_COUNTER[1] = 0;
-  }
 
+  } else  /* button up released. 
+  {
+    if (BUTTONS_OLD_STATE.DN)
+    {
+      BUTTONS_OLD_STATE.DN = 0;
+      if (BUTTON_COUNTER[1] >= BUTTON_DELAY)
+      {
+        CURRENT_MESSAGE = BUT_DN_MESSAGE;
+      }
+  };
+  }
+*/
 }
 
 if (PIR1bits.ADIF)

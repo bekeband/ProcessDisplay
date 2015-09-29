@@ -99,3 +99,8 @@ void LCDSendStr(const char* str) {
 		i++;
 	}
 }
+
+void LCDCursorAddress(unsigned char address)
+{
+  LCDSendCmd(CUR_UP + (address));
+}

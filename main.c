@@ -156,14 +156,14 @@ void MainDisplay()
 
      PrintMeasValue(DD_RAM_ADDR, 0, 0);
 
-      if (CURRENT_MESSAGE == BUT_DN_LONG)
+      if (CURRENT_MESSAGE == BUT_DN_UP)
       {
         CURRENT_DISPLAY = RANGESET_DISPLAY;
         CURRENT_MESSAGE = 0;
         DRAW_STATE = DRAW_INIT;
       }
 
-     if (CURRENT_MESSAGE == BUT_UP_LONG)
+     if (CURRENT_MESSAGE == BUT_UP_UP)
      {
        CURRENT_DISPLAY = TOTALIZER_DISPLAY;
        CURRENT_MESSAGE = 0;
@@ -180,6 +180,11 @@ void ClearSummas(int channel)
 
 void ClearAllSummas()
 { int i; for (i = 0; i < MAX_AD_COUNT; i++) { ClearSummas(i); } }
+
+void WriteChandatasWithChecksum()
+{
+
+}
 
 int WelcomeScreen()
 { char buf[20];
@@ -227,7 +232,7 @@ int WelcomeScreen()
         sprintf(buf, "PUSH ENT TO DEF.");
         LCDSendStr(buf);
         /* Push enter to load the default values to EEPROM. */
-        while (CURRENT_MESSAGE != BUT_DN_LONG);
+        while (CURRENT_MESSAGE != BUT_DN_UP);
         CURRENT_MESSAGE = 0;
         LCDSendCmd(CLR_DISP);
 
@@ -247,7 +252,10 @@ int WelcomeScreen()
 }
 
 int main(int, char** ) {
-  
+
+  uint16_t CRC_ADDRESS = _EEPROMSIZE - 2; // Last word the CRC checksum.
+  uint16_t CALCCHECKSUM;
+
   InitTimers();
 
   InitLCD();
@@ -273,8 +281,9 @@ int main(int, char** ) {
       case RANGESET_DISPLAY:
         if (RangeSetDisplay(0))
         {
-
-//          WriteDataEEP((unsigned char*) &CHAN_FEATS, 0, sizeof(CHAN_FEATS));
+          WriteDataEEP((unsigned char*) &CHAN_FEATS, 0, sizeof(CHAN_FEATS));
+          CALCCHECKSUM = gen_crc16(Read_b_eep, CHECKED_EEPROM_SIZE, 0);
+          WriteDataEEP((char*)&CALCCHECKSUM, CRC_ADDRESS, 2);
         }
       break;
       case TOTALIZER_DISPLAY:
@@ -293,7 +302,7 @@ int main(int, char** ) {
       WriteDataEEP((char*)&CHAN_SUMMAS, CHECKED_EEPROM_SIZE, sizeof(CHAN_SUMMAS));
     }
 
-  CURRENT_MESSAGE = 0;
+//  CURRENT_MESSAGE = 0;
   }
   return (EXIT_SUCCESS);
 }

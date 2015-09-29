@@ -122,20 +122,30 @@ extern "C" {
 
 #define   BUT_UP    PORTBbits.RB5
 
-#define   BUT_UP_MESSAGE    0x234
+#define   BUT_UP_DOWN       0x234
+#define   BUT_UP_UP         0x122
 #define   BUT_UP_LONG       0x345
+  
 #define   BUT_DN    PORTBbits.RB4
-#define   BUT_DN_MESSAGE    0x235
+#define   BUT_DN_DOWN       0x235
+#define   BUT_DN_UP         0x765
 #define   BUT_DN_LONG       0x564
 /* Low power input. */
 #define   LOWPOWER_INPUT   PORTBbits.RB0
 
-#define BUTTON_DELAY    4
-#define BUTTON_DELAY_2  30
+#define BUTTON_DELAY    2
+#define BUTTON_DELAY_2  60
+#define INHIBIT_TIME    2
 #define BUT_NUMBER      4
 
 #define TMR5LVAL   0xDC
 #define TMR5HVAL   0x0B
+
+#define TMR0LVAL  0x8F
+#define TMR0HVAL  0xFD
+
+/*#define TMR0LVAL  0x78
+#define TMR0HVAL  0xEC*/
 
 #define VERSION_DELAY   100
 
@@ -158,7 +168,7 @@ extern "C" {
 #define MAX_SUMMAS_VALUE  99999999.0
 
 #define RANGE_MIN 0
-#define RANGE_MAX 3.6
+#define RANGE_MAX 3.3
 
 typedef union  {
 struct s_eeprom_data {
@@ -177,6 +187,14 @@ typedef struct {
   float sum_2;
   uint8_t sum_dim;
 } s_summa_datas;
+
+typedef union {
+    struct {
+        unsigned UP                     :1;
+        unsigned DN                     :1;
+    };
+    unsigned BT                         :8;
+} BUTTONS_T;
 
 typedef enum
 {

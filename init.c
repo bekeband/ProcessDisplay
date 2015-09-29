@@ -33,14 +33,30 @@ void InitTimers()
                                 01 = 1:2 Prescale value 00 = 1:1 Prescale value */
   T5CONbits.TMR5ON = 1;
 
-//  T0CONbits.TMR0ON
+
+    // FOSCP4
+/*  T0CONbits.PSA = 0;
+  T0CONbits.T0PS = 0xb100;  /* 1/8 prescaler value 625000 Hz
+
+  T0CONbits.T08BIT = 0;     /* 16 bits counter. 
+
+  T0CONbits.T0CS = 0;
+  T0CONbits.T0SE = 0;
+  TMR0L = TMR0LVAL;
+  TMR0H = TMR0HVAL;
+  INTCONbits.TMR0IE = 1;
+  T0CONbits.TMR0ON = 1;*/
+
+
 
 }
 
 void InitButtons()
 {
   PORTB = 0;
+  ANSELB = 0;
   TRISB   = 0b11110001;  // RB4, RB5, RB6, RB7 inputs
+
   PORTE = 0;
   LATE = 0;
   ANSELE = 0;
