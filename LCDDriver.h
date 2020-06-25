@@ -16,6 +16,7 @@ extern "C" {
 void InitLCD(void);
 void LCDSendStr(const char* str);
 void LCDSendCmd(unsigned char c);
+void LCDCursorAddress(unsigned char address);
 
 #ifdef	__cplusplus
 }

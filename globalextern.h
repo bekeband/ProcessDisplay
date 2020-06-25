@@ -28,6 +28,7 @@ extern volatile uint8_t NEW_AD_DATAS[MAX_AD_COUNT];
 extern volatile uint8_t NEW_AD_CHANGES[MAX_AD_COUNT];
 extern volatile int CURRENT_MESSAGE;
 extern volatile int TIMER_COUNTER_VALUE;
+extern volatile int HOUR_FLAG;
 
 
 /* MESSAGE_FUNC(int, int) */
@@ -56,6 +57,7 @@ typedef enum
   MAIN_DISPLAY,
   IOTEST_DISPLAY,
   ADSET_DISPLAY,
+  RANGESET_DISPLAY,
   TOTALIZER_DISPLAY
 } DISPLAY_STATES;
 
@@ -69,6 +71,7 @@ typedef enum
   HIGH_SET,
   AD_SET_EXIT
 }ADSET_STATES;
+
 
 #ifdef	__cplusplus
 }

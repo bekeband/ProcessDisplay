@@ -33,14 +33,30 @@ void InitTimers()
                                 01 = 1:2 Prescale value 00 = 1:1 Prescale value */
   T5CONbits.TMR5ON = 1;
 
-//  T0CONbits.TMR0ON
+
+    // FOSCP4
+/*  T0CONbits.PSA = 0;
+  T0CONbits.T0PS = 0xb100;  /* 1/8 prescaler value 625000 Hz
+
+  T0CONbits.T08BIT = 0;     /* 16 bits counter. 
+
+  T0CONbits.T0CS = 0;
+  T0CONbits.T0SE = 0;
+  TMR0L = TMR0LVAL;
+  TMR0H = TMR0HVAL;
+  INTCONbits.TMR0IE = 1;
+  T0CONbits.TMR0ON = 1;*/
+
+
 
 }
 
 void InitButtons()
 {
   PORTB = 0;
+  ANSELB = 0;
   TRISB   = 0b11110001;  // RB4, RB5, RB6, RB7 inputs
+
   PORTE = 0;
   LATE = 0;
   ANSELE = 0;
@@ -50,7 +66,7 @@ void InitButtons()
 void InitAD()
 {
   VREFCON0bits.FVREN = 1;
-  VREFCON0bits.FVRS = 0b01;
+  VREFCON0bits.FVRS = 0b10;
   while (!VREFCON0bits.FVRST);
 
   ADCON2bits.ADFM   = 1;      // A/D Conversion Result Format Select bit 1 = Right justified 0 = Left justified
@@ -69,10 +85,10 @@ void InitADValues()
   {
     CHAN_FEATS[i].eeprom_datas.input_dim = 0;     // input dim %
     CHAN_FEATS[i].eeprom_datas.input_type = 0;    // input type 4-20 mA
-    CHAN_FEATS[i].eeprom_datas.min_eng = 0;       //6547;    // MIN. input integer value
-    CHAN_FEATS[i].eeprom_datas.max_eng = 26660;   // MAX. input integer value
-    CHAN_FEATS[i].eeprom_datas.min_val = 0;       //
-    CHAN_FEATS[i].eeprom_datas.max_val = 11.11;     //
+    CHAN_FEATS[i].eeprom_datas.min_eng = VAL04MA;       //6547;    // MIN. input integer value
+    CHAN_FEATS[i].eeprom_datas.max_eng = VAL20MA;   // MAX. input integer value
+    CHAN_FEATS[i].eeprom_datas.min_val = RANGE_MIN;       //
+    CHAN_FEATS[i].eeprom_datas.max_val = RANGE_MAX;     //
   }
 }
 

@@ -8,7 +8,6 @@
       <itemPath>ADDatas.h</itemPath>
       <itemPath>LCDDriver.h</itemPath>
       <itemPath>globalextern.h</itemPath>
-      <itemPath>EEPROM_D.h</itemPath>
       <itemPath>crc.h</itemPath>
       <itemPath>init.h</itemPath>
       <itemPath>ADSetDisplay.h</itemPath>
@@ -16,14 +15,15 @@
       <itemPath>BUTTestDisplay.h</itemPath>
       <itemPath>IOTestDisplay.h</itemPath>
       <itemPath>TOTDisplay.h</itemPath>
+      <itemPath>RangeSetDisplay.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
                    projectFiles="true">
     </logicalFolder>
     <logicalFolder name="f1" displayName="MyDoc" projectFiles="true">
-      <itemPath>../../Documentation/User Guide PD 786 Process Indicator Display EN.odt</itemPath>
-      <itemPath>../../Documentation/User Guide PD 786 Process Indicator Display HU.odt</itemPath>
+      <itemPath>mydoc/User Guide PD 786 Process Indicator Display EN.odt</itemPath>
+      <itemPath>mydoc/User Guide PD 786 Process Indicator Display HU.odt</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -38,6 +38,7 @@
       <itemPath>BUTTestDisplay.c</itemPath>
       <itemPath>IOTestDisplay.c</itemPath>
       <itemPath>TOTDisplay.c</itemPath>
+      <itemPath>RangeSetDisplay.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -149,20 +150,19 @@
         <property key="program-the-device-with-default-config-words" value="true"/>
       </HI-TECH-LINK>
       <PICkit3PlatformTool>
-        <property key="AutoSelectMemRanges" value="auto"/>
+        <property key="AutoSelectMemRanges" value="manual"/>
         <property key="Freeze Peripherals" value="false"/>
         <property key="SecureSegment.SegmentProgramming" value="FullChipProgramming"/>
         <property key="ToolFirmwareFilePath"
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
-        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
         <property key="memories.configurationmemory" value="true"/>
         <property key="memories.configurationmemory2" value="true"/>
         <property key="memories.dataflash" value="true"/>
-        <property key="memories.eeprom" value="true"/>
+        <property key="memories.eeprom" value="false"/>
         <property key="memories.flashdata" value="true"/>
         <property key="memories.id" value="true"/>
         <property key="memories.programmemory" value="true"/>
@@ -173,7 +173,7 @@
         <property key="memories.programmemory.partition2.start"
                   value="${memories.programmemory.partition2.start.value}"/>
         <property key="memories.programmemory.start" value="0x0"/>
-        <property key="poweroptions.powerenable" value="true"/>
+        <property key="poweroptions.powerenable" value="false"/>
         <property key="programmertogo.imagename" value=""/>
         <property key="programoptions.donoteraseauxmem" value="false"/>
         <property key="programoptions.eraseb4program" value="true"/>

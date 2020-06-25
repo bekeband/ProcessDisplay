@@ -25,17 +25,11 @@ int BUTTestDisplay()
         LCDSendCmd(DD_RAM_ADDR2);
         switch (CURRENT_MESSAGE)
         {
-          case BUT_UP_MESSAGE:
+          case BUT_UP_UP:
             strcpy(buf, "BUT_UP");
             break;
-          case BUT_DN_MESSAGE:
+          case BUT_DN_UP:
             strcpy(buf, "BUT_DN");
-            break;
-          case BUT_ENT_MESSAGE:
-            strcpy(buf, "BUT_ENT");
-            break;
-          case BUT_ESC_MESSAGE:
-            strcpy(buf, "BUT_ESC");
             break;
         };
       CURRENT_MESSAGE = 0;
